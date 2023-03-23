@@ -1,0 +1,38 @@
+{
+    "name": "Systems-X PLEX WorkHelper",
+    "description": "Systems-X's web extension for PLEX ERP enhancements.",
+    "version": "0.1",
+    "manifest_version": 3,
+    "action": {
+        "default_icon": "images/sx-plex-logo.png",
+        "default_title": "PLEX WorkHelper",
+        "default_popup": "html/popup.html"
+    },
+    "icons": {
+        "16": "images/sx-plex-logo.png",
+        "48": "images/sx-plex-logo.png",
+        "128": "images/sx-plex-logo.png"
+    },
+    "permissions": [
+        "scripting",
+        "activeTab",
+        "storage",
+        "tabGroups",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "js/jquery.js",
+                "js/contentScript.js"
+            ],
+            "css": [
+                "css/style.css"
+            ],
+            "matches": [
+                "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*"
+            ],
+            "run_at": "document_end"
+        }
+    ]
+}
