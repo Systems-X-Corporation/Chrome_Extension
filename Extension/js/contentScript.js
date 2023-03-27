@@ -24,7 +24,7 @@ chrome.storage.local.set({ pcn: pcn }).then(() => { });
 
 
 
-requestingDataApi()
+// requestingDataApi()
 
 // Function for Calling Api
 function requestingDataApi() {
