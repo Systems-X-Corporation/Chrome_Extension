@@ -1,34 +1,83 @@
 console.log("hello World");
+let data = []
+let hierarchyArr = [];
+let pcnarr
+let authToken
 
-let Last_DAta = []
-let treedata = []
-let lengthdata = []
-let pattern = /^[1-9]\d*(\.[1-9]\d*)*/gm;
-const Data = []
-prev_element_len = 0
-zero_len = []
-last_parent_idx = 0
-last_parent_adr = 0
-final_data = []
 
-document.querySelector(".plex-element-list .plex-picker-control .plex-picker-icon").addEventListener("click", function () {
+// Setting up pcn 
+let scripts = document.getElementsByTagName("script");
+for (let i = 0; i < scripts.length; i++) {
+    const script = scripts[i];
+    if (script.innerHTML.includes("plex.appState")) {
+        pcnarr = script.innerHTML
+        break;
+    }
+}
+pcnarr = pcnarr.split("'")[1]
+pcnarr = pcnarr.split("'")[0]
+pcnarr = pcnarr.split(/\\/).join("")
+pcnarr = JSON.parse(pcnarr)
+const pcn = pcnarr.customer.pcn
+console.log(pcn);
+chrome.storage.local.set({ pcn: pcn }).then(() => { });
 
-    chrome.storage.local.get(["ShowTree"]).then((result) => {
-        showtreeview = result.ShowTree
-        console.log(showtreeview);
-        if (showtreeview == true) {
-            chrome.storage.local.get(["TokenValue"]).then((result) => {
-                Token = result.TokenValue
-                if (Token) {
-                    console.log("clicked");
-                    findingPickerSearchResult()
-                    tabledataExtractor()
+
+
+requestingDataApi()
+
+// Function for Calling Api
+function requestingDataApi() {
+    console.log("request for data");
+
+    if (document.location.href.includes("https://cloud.plex.com/")) {
+        console.log("hello");
+        var settings = {
+            "url": "https://cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Authorization": "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({
+                "inputs": {
+                    "Description_With_Hierarchy": ""
                 }
-            })
-        }
-    })
+            }),
+        };
 
-})
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            data = response
+            treeviwrecall()
+        });
+    }
+    if (document.location.href.includes("https://test.cloud.plex.com/")) {
+        console.log("hello test");
+        var settings = {
+            "url": "https://test.cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "Authorization": "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
+                "Content-Type": "application/json"
+            },
+            "data": JSON.stringify({
+                "inputs": {
+                    "Description_With_Hierarchy": ""
+                }
+            }),
+        };
+
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            data = response
+            treeviwrecall()
+        });
+    }
+}
 
 // Function Waiting for the Elements
 function waitForElement(selector) {
@@ -51,108 +100,65 @@ function waitForElement(selector) {
     });
 }
 
-// To Extract Table data
-async function tabledataExtractor() {
-    console.log("clicked////////////////////////////////////");
-    await waitForElement(".plex-grid-wrapper table tbody tr")
-    let tablerow = document.querySelectorAll(".plex-grid-wrapper table tbody tr")
-    let DataArr = []
-    let matchPatterns = []
-    for (let i = 0; i < tablerow.length; i++) {
-        let pattern = /^[1-9]\d*(\.[1-9]\d*)*/gm;
-        if (tablerow[i].querySelector("td:nth-child(3)").innerHTML.match(pattern)) {
-            DataArr.push({
-                name: tablerow[i].querySelector("td:nth-child(3)").innerHTML
-            })
-
-        } else {
-            matchPatterns.push({
-                name: tablerow[i].querySelector("td:nth-child(3)").innerHTML
-            })
-
-        }
-    }
-    // -----------------------------------------------------
-    function cal_len(elem) {
-        if (elem) {
-            let splitdata = elem[0].split('.')
-            return splitdata.length
-        }
-        else {
-            return 0
-        }
-    }
-
-    for (let i = 0; i < DataArr.length; i++) {
-        let el = DataArr[i]
-        let elem = DataArr[i].name.match(pattern)
-        let len = cal_len(elem)
-        let obj = { "name": DataArr[i].name, "children": [], len: len }
-        Data.push(obj)
-    }
-
-    Data.sort(function (a, b) {
-        return a.len - b.len;
-    });
-
-
-    function find_parent(final_data, child_adr) {
-
-        parent_adr = final_data[0]
-        for (let index = 1; index < final_data.length; index++) {
-            if (child_adr.name == final_data[index].name) {
-                return parent_adr
-            }
-            parent_adr = final_data[index]
-        }
-        return parent_adr
-    }
-
-
-    for (let i = 0; i < Data.length; i++) {
-        const element_i = Data[i];
-        cur_element_len = Data[i].len;
-        if (element_i.len === 0) {
-            obj = { name: element_i.name, children: [] }
-            zero_len.push(obj)
-            continue
-        }
-
-        if (final_data.length == 0) {
-            obj = { name: element_i.name, children: [] }
-            final_data.push(obj)
-            last_parent_idx = final_data.length - 1
-            prev_element_len = Data[i].len;
-            last_parent_adr = obj
-            continue
-        }
-
-        if (cur_element_len == prev_element_len) {
-            let parent_element = find_parent(final_data, last_parent_adr)
-            data_obj = { name: element_i.name, children: [] }
-            parent_element.children.push(data_obj);
-            continue
-        }
-
-        if (cur_element_len > prev_element_len) {
-            let parent_element = last_parent_adr
-            obj = { name: element_i.name, children: [] }
-            parent_element.children.push(obj);
-            last_parent_idx = i - 1
-            last_parent_adr = obj
-            prev_element_len = cur_element_len
-        }
-    }
-    // console.log(final_data);
-    // console.log(matchPatterns);
-    let final_array_data = final_data.concat(matchPatterns)
-    // console.log(final_array_data);
-    // -----------------------------------------------------
-    Last_DAta = final_array_data
-
-    // settingTreeview()
+// Function for Getting Current url
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
 }
 
+function AuthSuccess() {
+    // Query Selector for Equipment btn
+    document.querySelector(".plex-element-list .plex-picker-control .plex-picker-icon").addEventListener("click", function () {
+
+        chrome.storage.local.get(["ShowTree"]).then((result) => {
+            showtreeview = result.ShowTree
+            console.log(showtreeview);
+            if (showtreeview == true) {
+                chrome.storage.local.get(["TokenValue"]).then((result) => {
+                    Token = result.TokenValue
+                    if (Token) {
+                        console.log("clicked");
+                        findingPickerSearchResult()
+                        if (data.length != 0) {
+                            createTreeviweData()
+                            console.log("data Present");
+                        }
+
+
+                        if (data.length == 0) {
+                            apirecallingFn()
+                            console.log("search btn Clicked api request");
+                        }
+                        // tabledataExtractor()
+                    }
+                })
+            }
+        })
+
+    })
+}
+
+
+// Function For Callin fFunction's Again if api response is late
+async function apirecallingFn() {
+    console.log("apirecallingFn called");
+    if (data == 0) {
+        requestingDataApi()
+    }
+
+}
+
+async function treeviwrecall() {
+    await waitForElement(".rowdataviewcontainer")
+
+    if (document.querySelector(".rowdataviewcontainer").innerHTML == '') {
+        console.log("inside if recallingFn");
+        createTreeviweData()
+    }
+}
+
+// Function For Adding Button On Live Page
 async function findingPickerSearchResult() {
 
     await waitForElement(".plex-picker-search-results")
@@ -187,34 +193,86 @@ async function findingPickerSearchResult() {
             }
         })
     }
-    // document.querySelector(".plex-picker-search .plex-picker-search-buttons .btn-default").addEventListener("click", function () {
-    //     console.log("clicked");
-    //     tabledataExtractor()
-    //     settingTreeview()
-
-    // })
 }
 
+// Function for Show table btn
 function showTableView() {
     document.querySelector(".plex-picker-content").classList.remove("display-none");
     document.querySelector(".rowdataviewcontainer").classList.add("display-none");
 }
 
+// Function for Show row btn
 function showRowView() {
-    settingTreeview()
-    console.log(Last_DAta);
+    // if api data is empty by any reason
+    if (data.length == 0) {
+        console.log("Data is empty");
+        apirecallingFn()
+
+    }
     document.querySelector(".plex-picker-content").classList.add("display-none");
     document.querySelector(".rowdataviewcontainer").classList.remove("display-none");
 }
 
+// Function For Seeting Up Data in Tree View
+function createTreeviweData() {
+    if (data.length == 0) {
+        apirecallingFn()
+    } else {
+        function createHierarchyArr(Last_DAta, node, parent) {
+            if (Last_DAta.length > 0) {
+                for (let i = 0; i < Last_DAta.length; i++) {
+                    const item = Last_DAta[i];
+                    let newItem;
+                    if (item.children && item.children.length > 0) {
+                        newItem = createHierarchyArr(item.children, node, parent);
+                    } else if (item.id == parent) {
+                        item.children.push(node);
+                    }
+                    if (newItem) {
+                        Last_DAta[i] = newItem;
+                    }
+                }
+            }
+            else {
+                Last_DAta.push(node)
+            }
+            return Last_DAta;
+        }
+        for (let i = 0; i < data.tables[0].rows.length; i++) {
+            const val = data.tables[0].rows[i][1];
+            const parent = data.tables[0].rows[i][3];
+            let name = data.tables[0].rows[i][11];
+            let check = data.tables[0].rows[i][5];
+            let node = {
+                name,
+                id: val,
+                children: [],
+            };
+            if (parent == null) {
+                hierarchyArr.push(node);
+            } else {
+                for (let i = 0; i < hierarchyArr.length; i++) {
+                    const el = hierarchyArr[i];
+                    if (check.includes(el.id)) {
+                        // console.log(el.children);   
+                        hierarchyArr[i].children = createHierarchyArr(el.children, node, parent);
+                        break;
+                    }
+                }
+            }
+        }
+        // console.log(hierarchyArr);
+        settingTreeview()
+    }
+}
 
-
+// Function for setting Tree view from api data
 function settingTreeview() {
 
-    function createHierarchyView(Last_DAta) {
+    function createHierarchyView(hierarchyArr) {
         let html = `<ul class="folder-tree">`;
-        for (let i = 0; i < Last_DAta.length; i++) {
-            const item = Last_DAta[i];
+        for (let i = 0; i < hierarchyArr.length; i++) {
+            const item = hierarchyArr[i];
             html += `<li> <span>${item.name}</span> `;
             if (item.children && item.children.length > 0) {
                 html += createHierarchyView(item.children);
@@ -226,25 +284,8 @@ function settingTreeview() {
     }
 
     const treeDataContainer = document.querySelector(".rowdataviewcontainer");
-    // const Data = [{
-    //     "name": "6.1.1 Engle Press 1 -",
-    //     "children": [
-    //         {
-    //             "name": "6.1.1.1 Hydraulic Unit -",
-    //             "children": [
-    //                 { "name": "6.1.1.1.1.1 Hydraulic Pump -" }
-    //             ]
-    //         }
-    //     ]
-    // },
-    // { "name": "A-1 - A-line Press" },
-    // { "name": "A-2 - A-line Press" },
-    // { "name": "A-3 - A-line Press" },
-    // { "name": "C-1 - A-line Press" },
-    // { "name": "c-2 - A-line Press" },
-    // ]
-    const html = createHierarchyView(Last_DAta);
-    // appending html
+
+    const html = createHierarchyView(hierarchyArr);
     treeDataContainer.innerHTML = html;
 
     let uidata = document.querySelectorAll(".rowdataviewcontainer ul li")
@@ -294,6 +335,7 @@ function settingTreeview() {
 
     });
 
+    // 
     let livalue = document.querySelectorAll(".rowdataviewcontainer ul li span")
     for (let i = 0; i < livalue.length; i++) {
         livalue[i].addEventListener("click", function () {
@@ -302,26 +344,36 @@ function settingTreeview() {
             searchIconClick()
         })
 
-        // console.log(livalue[i].innerText, i)
     }
 }
 
-
+// function For click on serach icon
 function searchIconClick() {
     setTimeout(() => {
         document.querySelector(".plex-control-label #autoID42").click()
         console.log("Clicked on search");
     }, 100);
 }
+chrome.storage.local.get(["TokenValue"]).then((result) => {
+    authToken = result.TokenValue
+    var settings = {
+        "url": "http://localhost:8080/verifyToken",
+        "method": "POST",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "data": JSON.stringify({
+            "pcn": pcn,
+            "token": authToken
+        }),
+    };
 
+    $.ajax(settings).done(function (response) {
+        console.log(response);
+        if (response.verified == true) {
+            AuthSuccess()
+        }
 
-
-Rows = [
-    { "EquipmentKey": 184928, "EquipmentType": "L1 - Asset", "EquipmentID": "6.1.1 Engle Press 1", "Description": "", "FullDescription": "6.1.1 Engle Press 1 -", "Location": "Ford U625 Engine Rail", "BuildingCode": "Corporate" },
-    { "EquipmentKey": 184929, "EquipmentType": "L2 - Functional Assembly", "EquipmentID": "6.1.1.1 Hydraulic Unit", "Description": "", "FullDescription": "6.1.1.1 Hydraulic Unit -", "Location": "Ford U625 Engine Rail", "BuildingCode": "Corporate" },
-    { "EquipmentKey": 184930, "EquipmentType": "L3 - Axis", "EquipmentID": "6.1.1.1.1.1 Hydraulic Pump", "Description": "", "FullDescription": "6.1.1.1.1.1 Hydraulic Pump -", "Location": "Ford U625 Engine Rail", "BuildingCode": "Corporate" },
-    { "EquipmentKey": 174411, "EquipmentType": "Press - Automatic", "EquipmentID": "A-1", "Description": "A-line Press", "FullDescription": "A-1 - A-line Press", "Location": "", "BuildingCode": null },
-    { "EquipmentKey": 174412, "EquipmentType": "Press - Automatic", "EquipmentID": "A-2", "Description": "A-line Press", "FullDescription": "A-2 - A-line Press", "Location": "", "BuildingCode": null },
-    { "EquipmentKey": 174413, "EquipmentType": "Press - Automatic", "EquipmentID": "A-3", "Description": "A-line Press", "FullDescription": "A-3 - A-line Press", "Location": "", "BuildingCode": null },
-    { "EquipmentKey": 174414, "EquipmentType": "Press - Automatic", "EquipmentID": "C-1", "Description": "C-line Press", "FullDescription": "C-1 - C-line Press", "Location": "", "BuildingCode": null },
-    { "EquipmentKey": 174415, "EquipmentType": "Press - Automatic", "EquipmentID": "C-2", "Description": "C-line Press", "FullDescription": "C-2 - C-line Press", "Location": "", "BuildingCode": null }]
+    });
+})

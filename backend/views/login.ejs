@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login</title>
+    <style>
+      .container {
+        text-align: center;
+      }
+      label {
+        text-align: left;
+        font-size: 18px;
+      }
+      .form {
+        text-align: left;
+        margin: auto;
+        max-width: 500px;
+      }
+      input {
+        width: 80%;
+        font-size: 18px;
+        padding: 8px 10px;
+      }
+      button {
+        background-color: cadetblue;
+        color: #fff;
+        padding: 8px 20px;
+        border: 1px solid cadetblue;
+        border-radius: 10px;
+        font-size: 18px;
+      }
+      #result {
+        text-align: center;
+        font-size: 18px;
+      }
+      #error {
+        text-align: center;
+        font-size: 18px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Admin Login</h1>
+      <div class="form">
+        <label for="pcn">Enter Email:</label><br /><br />
+        <input
+          type="text"
+          name="email"
+          id="email"
+          placeholder="Enter Email"
+        /><br /><br />
+        <label for="pcn">Enter Password:</label><br /><br />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Enter Password"
+        /><br /><br />
+        <button id="submitBtn">Submit</button>
+      </div>
+      <div id="result" style="display: none"></div>
+      <div id="error" style="display: none"></div>
+    </div>
+
+    <script>
+        
+        var requestOptions = {
+          method: "GET",
+        };
+
+        fetch("/verifylogin", requestOptions)
+        .then((r) =>
+            r.json().then((data) => ({ status: r.status, body: data }))
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+              window.location.href = "/"
+            } else if (res.status == 401) {
+              console.log(res);;
+            }
+          })
+          .catch((error) => console.log(error));
+      let submit = document.getElementById("submitBtn");
+      submit.addEventListener("click", (e) => {
+        e.preventDefault();
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append(
+          "Cookie",
+          "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaGl0QGxha2VicmFpbnMuaW4iLCJpYXQiOjE2Nzk5MDc4NjB9.DzT4MansS3PlsTTD9612VMLIoCkkK1zIC9S4Nftzqgs"
+        );
+
+        var raw = JSON.stringify({
+          email,
+          password,
+        });
+
+        var requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+
+        fetch("/adminlogin", requestOptions)
+          .then((r) =>
+            r.json().then((data) => ({ status: r.status, body: data }))
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+              window.location.href = "/";
+            } else if (res.status == 401) {
+              let result = document.getElementById("result");
+              let error = document.getElementById("error");
+              error.innerHTML = res.body.message;
+              result.style.display = "none";
+              error.style.display = "unset";
+            }
+          })
+          .catch((err) => {
+            let result = document.getElementById("result");
+            let error = document.getElementById("error");
+            error.innerHTML = err.message;
+            result.style.display = "none";
+            error.style.display = "unset";
+          });
+      });
+    </script>
+  </body>
+</html>
