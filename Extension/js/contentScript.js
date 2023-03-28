@@ -1,11 +1,11 @@
-console.log("hello World");
+// console.log("hello World");
 let data = []
 let hierarchyArr = [];
 let pcnarr
 let authToken
 
 
-// Setting up pcn 
+// For loop for finding the PCN number from frontend 
 let scripts = document.getElementsByTagName("script");
 for (let i = 0; i < scripts.length; i++) {
     const script = scripts[i];
@@ -19,27 +19,23 @@ pcnarr = pcnarr.split("'")[0]
 pcnarr = pcnarr.split(/\\/).join("")
 pcnarr = JSON.parse(pcnarr)
 const pcn = pcnarr.customer.pcn
-console.log(pcn);
+// Adding the PCN number to the local storage
 chrome.storage.local.set({ pcn: pcn }).then(() => { });
 
-
-
-// requestingDataApi()
-
-// Function for Calling Api
+// Function for Calling Api 
 function requestingDataApi() {
-    console.log("request for data");
 
+    // If we open the https://cloud.plex.com then this if condition api called
     if (document.location.href.includes("https://cloud.plex.com/")) {
-        console.log("hello");
         var settings = {
-            "url": "https://cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate",
+            "url": `https://cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate`,
             "method": "POST",
             "timeout": 0,
             "headers": {
                 "Authorization": "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
                 "Content-Type": "application/json"
             },
+            // Requesting for Description_With_Hierarchy data with api
             "data": JSON.stringify({
                 "inputs": {
                     "Description_With_Hierarchy": ""
@@ -49,11 +45,13 @@ function requestingDataApi() {
 
 
         $.ajax(settings).done(function (response) {
-            console.log(response);
+            // Response from the api will stored in data array
             data = response
             treeviwrecall()
+            // console.log(response);
         });
     }
+    // If we open the https://test.cloud.plex.com then this if condition api called
     if (document.location.href.includes("https://test.cloud.plex.com/")) {
         console.log("hello test");
         var settings = {
@@ -64,6 +62,7 @@ function requestingDataApi() {
                 "Authorization": "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
                 "Content-Type": "application/json"
             },
+            // Requesting for Description_With_Hierarchy data with api
             "data": JSON.stringify({
                 "inputs": {
                     "Description_With_Hierarchy": ""
@@ -72,9 +71,10 @@ function requestingDataApi() {
         };
 
         $.ajax(settings).done(function (response) {
-            console.log(response);
+            // Response from the api will stored in data array
             data = response
             treeviwrecall()
+            // console.log(response);
         });
     }
 }
@@ -100,32 +100,35 @@ function waitForElement(selector) {
     });
 }
 
-// Function for Getting Current url
+// Function for Getting Current tab url
 async function getCurrentTab() {
     let queryOptions = { active: true, lastFocusedWindow: true };
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
 }
 
+// Function for equipemnt id on click
 function AuthSuccess() {
     // Query Selector for Equipment btn
     document.querySelector(".plex-element-list .plex-picker-control .plex-picker-icon").addEventListener("click", function () {
-
+        // Condition for Tree view checkbox
         chrome.storage.local.get(["ShowTree"]).then((result) => {
             showtreeview = result.ShowTree
             console.log(showtreeview);
             if (showtreeview == true) {
+                // Condition for Tree Token Value
                 chrome.storage.local.get(["TokenValue"]).then((result) => {
                     Token = result.TokenValue
                     if (Token) {
-                        console.log("clicked");
+                        // console.log("clicked");
                         findingPickerSearchResult()
+                        // Checking the api data
                         if (data.length != 0) {
                             createTreeviweData()
                             console.log("data Present");
                         }
 
-
+                        //  If Api Data length is zero then this condition work
                         if (data.length == 0) {
                             apirecallingFn()
                             console.log("search btn Clicked api request");
@@ -140,33 +143,38 @@ function AuthSuccess() {
 }
 
 
-// Function For Callin fFunction's Again if api response is late
+// Function For Calling fFunction's Again if api response is late or empty
 async function apirecallingFn() {
-    console.log("apirecallingFn called");
+    // console.log("apirecallingFn called");
     if (data == 0) {
+        // Calling the API Request function
         requestingDataApi()
     }
 
 }
 
+// Function for setting up the api data in tree view
 async function treeviwrecall() {
+    // Waiting for the element
     await waitForElement(".rowdataviewcontainer")
 
     if (document.querySelector(".rowdataviewcontainer").innerHTML == '') {
-        console.log("inside if recallingFn");
+        // console.log("inside if recallingFn");
         createTreeviweData()
     }
 }
 
 // Function For Adding Button On Live Page
 async function findingPickerSearchResult() {
-
+    // Waiting for the element
     await waitForElement(".plex-picker-search-results")
 
+    // Creating the radio button for toggling tree and table view
     let pixcelSearchResult = document.querySelector(".plex-picker-search-results")
     let pixcelSearchSection = document.querySelector(".plex-picker-search-section")
     let tableandrowelement = document.createElement("div")
     tableandrowelement.setAttribute("id", "Table_And_Row_Switch_Section");
+    // Show table is by default checked
     tableandrowelement.innerHTML = `
             <input type="radio" id="Table_And_Row_Radio_Btn" name="Row_and_Tree_view" value="Show_table" checked="checked">
             <label for= "html" >Show table</label >
@@ -175,19 +183,22 @@ async function findingPickerSearchResult() {
             `
     pixcelSearchResult.prepend(tableandrowelement)
 
+    // Creating div for the tree view 
     let rowdataviewcontainer = document.createElement("div")
     rowdataviewcontainer.classList.add("rowdataviewcontainer")
     rowdataviewcontainer.classList.add("display-none")
     pixcelSearchResult.append(rowdataviewcontainer)
 
-
+    // for loop for radio btn functionality
     let radioBtnRowTable = document.querySelectorAll("#Table_And_Row_Radio_Btn")
     for (let i = 0; i < radioBtnRowTable.length; i++) {
+        // Adding eventlistner for radio btn
         radioBtnRowTable[i].addEventListener("click", function () {
             let radioBtnValue = $("input[type='radio'][name='Row_and_Tree_view']:checked").val()
-            // console.log(radioBtnValue);
+            // If Show table Btn value is checked
             if (radioBtnValue == "Show_table") {
                 showTableView()
+                // else Show tree Btn value is checked
             } else if (radioBtnValue == "Show_tree") {
                 showRowView()
             }
@@ -195,8 +206,9 @@ async function findingPickerSearchResult() {
     }
 }
 
-// Function for Show table btn
+// Function for Show table radio btn
 function showTableView() {
+    // Adding and Removeing display-none class to tree view and table view
     document.querySelector(".plex-picker-content").classList.remove("display-none");
     document.querySelector(".rowdataviewcontainer").classList.add("display-none");
 }
@@ -205,19 +217,25 @@ function showTableView() {
 function showRowView() {
     // if api data is empty by any reason
     if (data.length == 0) {
-        console.log("Data is empty");
+        // console.log("Data is empty");
+        // calling the api recall function
         apirecallingFn()
 
     }
+    // Adding and Removeing display-none class to tree view and table view
     document.querySelector(".plex-picker-content").classList.add("display-none");
     document.querySelector(".rowdataviewcontainer").classList.remove("display-none");
 }
 
 // Function For Seeting Up Data in Tree View
 function createTreeviweData() {
+    // If lenght of data is zero then this condition called
     if (data.length == 0) {
+        // Function for api recalling
         apirecallingFn()
+        // If length of data is not equal to zero
     } else {
+        // Function For Setting the Children in hierarchy view
         function createHierarchyArr(Last_DAta, node, parent) {
             if (Last_DAta.length > 0) {
                 for (let i = 0; i < Last_DAta.length; i++) {
@@ -238,6 +256,7 @@ function createTreeviweData() {
             }
             return Last_DAta;
         }
+        // Loop for Setting the data in hierarchy vire
         for (let i = 0; i < data.tables[0].rows.length; i++) {
             const val = data.tables[0].rows[i][1];
             const parent = data.tables[0].rows[i][3];
@@ -248,9 +267,12 @@ function createTreeviweData() {
                 id: val,
                 children: [],
             };
+            // If parrent of any obejct is null
             if (parent == null) {
+                // pusshing the node in hierarchyArr Array
                 hierarchyArr.push(node);
             } else {
+                // If parrent of any obejct is not equal to null
                 for (let i = 0; i < hierarchyArr.length; i++) {
                     const el = hierarchyArr[i];
                     if (check.includes(el.id)) {
@@ -261,14 +283,15 @@ function createTreeviweData() {
                 }
             }
         }
-        // console.log(hierarchyArr);
+        // Calling the function for setting up the tree view
         settingTreeview()
     }
 }
 
-// Function for setting Tree view from api data
+// Function for setting Tree view from hierarchyArr Array
 function settingTreeview() {
 
+    // Creating the hierarchy view with hierarchyArr data
     function createHierarchyView(hierarchyArr) {
         let html = `<ul class="folder-tree">`;
         for (let i = 0; i < hierarchyArr.length; i++) {
@@ -288,6 +311,7 @@ function settingTreeview() {
     const html = createHierarchyView(hierarchyArr);
     treeDataContainer.innerHTML = html;
 
+    // Functionality for Adding icons 
     let uidata = document.querySelectorAll(".rowdataviewcontainer ul li")
     for (let i = 0; i < uidata.length; i++) {
         let data = uidata[i].innerHTML.includes("ul")
@@ -304,6 +328,7 @@ function settingTreeview() {
         }
     }
 
+    // Functionality for expand and collepse the childrens
     var folderTreeList = document.querySelectorAll('.folder-tree li .arrow');
     folderTreeList.forEach(function (li) {
         if (li.firstChild.classList.contains("plus_icon_js")) {
@@ -335,7 +360,7 @@ function settingTreeview() {
 
     });
 
-    // 
+    // Functionaltiy to set the data in Equipment search bar
     let livalue = document.querySelectorAll(".rowdataviewcontainer ul li span")
     for (let i = 0; i < livalue.length; i++) {
         livalue[i].addEventListener("click", function () {
@@ -351,9 +376,11 @@ function settingTreeview() {
 function searchIconClick() {
     setTimeout(() => {
         document.querySelector(".plex-control-label #autoID42").click()
-        console.log("Clicked on search");
+        // console.log("Clicked on search");
     }, 100);
 }
+
+// Authenication Api calling
 chrome.storage.local.get(["TokenValue"]).then((result) => {
     authToken = result.TokenValue
     var settings = {
