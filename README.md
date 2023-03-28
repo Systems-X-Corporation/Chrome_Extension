@@ -1,9 +1,5 @@
-<!-- ............................................. -->
+User Guid to use this extension
+https://docs.google.com/document/d/1COgMAtqeQW8AFjVSZSUdTr_aUVuLAh3f/edit?usp=sharing&ouid=116642487315915287559&rtpof=true&sd=true
 
-Step 1: Download Or clone the Github Repo
-Step 2: If you don't have the node in you systen then install from https://nodejs.org/en/download
-Step 3: Open the terminal in the backend folder
-Step 4: Write `npi i` in terminal and press enter
-Step 5: Write `node index.js` in terminal and press enter
-Step 6: Open chrome extension 'chrome://extensions/' in chrome browser
-Step 7: Turn on the devloper mode
+How to use Plex extension in Devlopment Mode
+https://docs.google.com/document/d/1h-F8-rYVYcc5MwPFGee84EbkGY6A3kPAowk9Iu_tDe4/edit?usp=sharing
