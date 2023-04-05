@@ -10,6 +10,7 @@
 .plus_icon_js,
 .width100 {
   width: 100%;
+  transition: transform 0.5s ease-in-out;
 }
 
 .folder-tree-wrapper {
@@ -96,6 +97,9 @@
 .rowdataviewcontainer ul li span:hover {
   color: #ffffff;
   background: #0971a1;
+}
+.Rotate90 {
+  transform: rotate(90deg);
 }
 
 /* Loader */
