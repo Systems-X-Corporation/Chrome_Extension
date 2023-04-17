@@ -16,7 +16,9 @@ body {
 
 .logo_div {
   margin: auto;
-  max-width: 120px;
+  max-width: 240px;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 .logo_wrapper_system_x img {
   width: 100%;

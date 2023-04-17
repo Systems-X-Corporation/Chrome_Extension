@@ -374,21 +374,21 @@ function searchIconClick() {
 chrome.storage.local.get(["TokenValue"]).then((result) => {
     authToken = result.TokenValue
     var settings = {
-        "url": "http://localhost:8080/verifyToken",
+        "url": "http://localhost:8000/verify-pcn",
         "method": "POST",
         "timeout": 0,
         "headers": {
             "Content-Type": "application/json"
         },
         "data": JSON.stringify({
-            "pcn": pcn,
-            "token": authToken
+            "Pcn": pcn,
+            "Token": authToken
         }),
     };
 
     $.ajax(settings).done(function (response) {
         console.log(response);
-        if (response.verified == true) {
+        if (response.exists == true) {
             AuthSuccess()
         }
 
