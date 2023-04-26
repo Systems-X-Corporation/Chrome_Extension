@@ -62,3 +62,16 @@ checkbox.addEventListener('change', async function () {
         chrome.tabs.update(tab.id, { url: tab.url });
     }
 });
+
+document.getElementById("Token_input").addEventListener("change", () => {
+    let val = e.target.value
+    if(val){
+        document.getElementById("tokensavebtn").disabled = false
+        document.getElementById("tokensavebtn").style.color = "#fff"
+
+    }
+    else {
+        document.getElementById("tokensavebtn").disabled = true
+        document.getElementById("tokensavebtn").style.color = "unset"
+    }
+})
