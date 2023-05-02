@@ -1,5 +1,6 @@
 // Function for Getting Current tab
 async function getCurrentTab() {
+
     let queryOptions = { active: true, lastFocusedWindow: true };
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
@@ -14,23 +15,38 @@ document.querySelector("#plexclassic").addEventListener("click", function () {
     window.open("https://www.plexonline.com/", '_blank').focus();
 })
 
+
 // Saving the token value in save btn
 document.querySelector("#tokensavebtn").addEventListener("click", async function () {
+      
     let value = document.querySelector("#Token_input").value
     // Save the token in local storage
-    chrome.storage.local.set({ TokenValue: value }).then(() => { });
+    chrome.storage.local.set({ TokenValue: value }).then(() => { 
+        // document.querySelector("#Token_input").value =" ";
+        // document.querySelector("#Token_input").ariaPlaceholder =" Enter value";
+    });
     // Reloading the page after click
+    location.reload();
     let tab = await getCurrentTab()
     chrome.tabs.update(tab.id, { url: tab.url });
+
+    // chrome.storage.local.get('inputText', function() {
+    //    document.getElementById('Token_input').value = '';
+    //   })
+    //   chrome.storage.local.remove('inputText', function() {
+    //     document.getElementById('Token_input').value = ''; 
+    //   });
+    
 })
 
 // Getting the token and placing it into popup token input 
 chrome.storage.local.get(["TokenValue"]).then((result) => {
     Token = result.TokenValue
-    if (Token) {
-        document.querySelector("#Token_input").value = Token
-    }
     console.log(Token);
+    if (Token) {
+        document.querySelector("#Token_input").value = "";
+    }
+    
 })
 
 var checkbox = document.querySelector("#EquipmentCheck");
@@ -63,15 +79,37 @@ checkbox.addEventListener('change', async function () {
     }
 });
 
-document.getElementById("Token_input").addEventListener("change", () => {
-    let val = e.target.value
-    if(val){
-        document.getElementById("tokensavebtn").disabled = false
-        document.getElementById("tokensavebtn").style.color = "#fff"
+// document.getElementById("Token_input").addEventListener("change", () => {
+//     let val = e.target.value
+//     if(val){
+//         document.getElementById("tokensavebtn").disabled = false
+//         document.getElementById("tokensavebtn").style.color = "#fff"
 
-    }
-    else {
-        document.getElementById("tokensavebtn").disabled = true
-        document.getElementById("tokensavebtn").style.color = "unset"
+//     }
+//     else {
+//         document.getElementById("tokensavebtn").disabled = true
+//         document.getElementById("tokensavebtn").style.color = "unset"
+//     }
+// })
+
+
+
+document.getElementById("Token_input").addEventListener("input", () => {
+    var input = document.getElementById("Token_input");
+    var button = document.getElementById("tokensavebtn");
+    if (input.value.trim() !== "") {
+      button.disabled = false;
+      button.style.backgroundColor="#2c6e3a";
+      button.style.cursor="pointer";
+    } else {
+      button.disabled = true;
+      button.style.backgroundColor= "#5a8e65";
+      button.style.cursor="default";
     }
 })
+
+
+document.querySelector("#quicktoolimg").addEventListener("click", function () {
+    window.open("https://www.systems-x.com/en-us/contact-us?hsCtaTracking=e9deae1e-b808-45f9-8eb5-58b99ac20974%7C42c15435-0f3e-4a85-8c8b-d0ab8be4fe67").focus();
+}
+)
