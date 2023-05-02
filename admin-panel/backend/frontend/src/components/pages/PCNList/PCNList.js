@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './PCNList.css';
-import AdminPage from '../../pages/AdminPage/AdminPage';
+import AdminPage from '../AdminPage/AdminPage';
 
 function PCNList() {
   const [pcns, setPcns] = useState([]);
@@ -18,7 +18,7 @@ function PCNList() {
     } else {
       // Verify the token on the server
       axios
-        .post('/api/auth/verify', { token })
+        .post('http://localhost:8000/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -32,8 +32,8 @@ function PCNList() {
 useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get('/get-all-pcn');
-        setPcns(response.data);
+        const response = await axios.get('http://localhost:8000/get-all-pcn');
+        setPcns(response.data.recordset);
       } catch (error) {
         setError(error);
       }
@@ -41,16 +41,16 @@ useEffect(() => {
     fetchData();
   }, []);
 
-  const filteredPcns = pcns.filter(pcn =>
-    pcn.Pcn.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  console.log(filteredPcns);
+  // const filteredPcns = pcns.filter(pcn =>
+  //   pcn.Plex_PCN.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
+  console.log(pcns);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPcns.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = pcns.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredPcns.length / itemsPerPage);
+  const totalPages = Math.ceil(pcns.length / itemsPerPage);
 
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
@@ -91,9 +91,9 @@ useEffect(() => {
           :
         (
         currentItems.map((pcn, index) => (
-            <tr className="success" key={pcn._id}>
+            <tr className="success" key={index}>
               <td>{index + 1}</td>
-              <td>{pcn.Pcn}</td>
+              <td>{pcn.Plexus_Customer_No}</td>
               <td>{pcn.Token}</td>
             </tr>
         )
