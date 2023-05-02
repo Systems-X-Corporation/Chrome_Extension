@@ -154,4 +154,5 @@ input[type="checkbox"]:checked {
   border: none;
   margin-top: 20px;
   margin-right: 5px;
+  cursor: pointer;
 }
