@@ -18,7 +18,6 @@ document.querySelector("#plexclassic").addEventListener("click", function () {
 
 // Saving the token value in save btn
 document.querySelector("#tokensavebtn").addEventListener("click", async function () {
-      
     let value = document.querySelector("#Token_input").value
     // Save the token in local storage
     chrome.storage.local.set({ TokenValue: value }).then(() => { 
@@ -44,7 +43,7 @@ chrome.storage.local.get(["TokenValue"]).then((result) => {
     Token = result.TokenValue
     console.log(Token);
     if (Token) {
-        document.querySelector("#Token_input").value = "";
+        document.querySelector("#Token_input").value = Token;
     }
     
 })
@@ -97,14 +96,20 @@ checkbox.addEventListener('change', async function () {
 document.getElementById("Token_input").addEventListener("input", () => {
     var input = document.getElementById("Token_input");
     var button = document.getElementById("tokensavebtn");
+    var checkbox = document.getElementById("EquipmentCheck");
     if (input.value.trim() !== "") {
       button.disabled = false;
+      checkbox.disabled = false;
       button.style.backgroundColor="#2c6e3a";
       button.style.cursor="pointer";
+      button.style.color="white";
+      button.style.border = "2px solid white"
     } else {
       button.disabled = true;
+      checkbox.disabled = true;
       button.style.backgroundColor= "#5a8e65";
       button.style.cursor="default";
+      button.style.border = "2px solid red"
     }
 })
 
@@ -113,3 +118,19 @@ document.querySelector("#quicktoolimg").addEventListener("click", function () {
     window.open("https://www.systems-x.com/en-us/contact-us?hsCtaTracking=e9deae1e-b808-45f9-8eb5-58b99ac20974%7C42c15435-0f3e-4a85-8c8b-d0ab8be4fe67").focus();
 }
 )
+chrome.storage.local.get(["exists"]).then((result) => {
+console.log(result.exists);
+if(result.exists){
+    document.getElementById("isverify").innerHTML = "verify";
+}else{
+    document.getElementById("isverify").innerHTML = "not verify";
+
+}
+})
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//     if (message.type === 'data') {
+//         // Use the data from the message
+//         const data = message.data;
+//         console.log(data);
+//       }
+// })

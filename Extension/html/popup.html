@@ -17,13 +17,13 @@
             <div class="logo_div">
                 <img src="../images/Systems X Logo v9.1_HorizontalText_Alt.png">
                 <div class="CheckboxContainer">
-                    <input type="checkbox" id="EquipmentCheck" name="EquipmentCheck" value="EquipmentCheck">
+                    <input disabled type="checkbox" id="EquipmentCheck" name="EquipmentCheck" value="EquipmentCheck">
                     <!-- <p>Equipment ID Tree view</p> -->
                 </div>
             </div>
           
             
-            <p>Systems X Connect</p>
+            <p style="font-weight: 600;">SYSTEMS X CONNECT</p>
             <br>
         </div>
         <div class="Plex_links">
@@ -31,11 +31,13 @@
             <button id="plexclassic" class="plex_btn">Go to PLEX Classic</button>
         </div>
         <div class="input_area_token">
-            <input placeholder="Enter value" id="Token_input" type="text" oninput="checkInput()"><br>
+            <input placeholder="Enter Token" id="Token_input" type="text"><br>
+            <p id="isverify" style="color: white;"></p>
             <div class="buttons">            
             <button type="button" class="save" id="tokensavebtn" disabled >Save</button>
-            <button class="quicktool">
-                <img src="../images/quicktool.png" id="quicktoolimg" >
+            <button data-position="bottom" class="quicktool">
+                <img class="ex" src="../images/quicktool.png" id="quicktoolimg">
+                <span data-position="top" class="tooltip">Contact Us!</span>
             </button> 
             </div>
         </div>

@@ -83,7 +83,7 @@ function GeneratePCNForm() {
           />
         </label>
         <button onClick={handleGenerateToken} type="submit" class="generatepcn-button">
-          Generate PCN
+        Generate Token
         </button>
         {errorMessage && (
           <p className="error-message">{errorMessage}</p>

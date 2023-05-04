@@ -37,7 +37,7 @@ function VerifyPCN() {
       });
       console.log(response.data);
       if (response.data.exists) {
-        setIsValid("PCN Verified Successfully");
+        setIsValid("Invalid Token");
         setIsNotValid("");
       } else {
         setIsNotValid("PCN Is Not Verified");
