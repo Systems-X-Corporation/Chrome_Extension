@@ -37,10 +37,10 @@ function VerifyPCN() {
       });
       console.log(response.data);
       if (response.data.exists) {
-        setIsValid("Invalid Token");
+        setIsValid("Verified Token");
         setIsNotValid("");
       } else {
-        setIsNotValid("PCN Is Not Verified");
+        setIsNotValid("Invalid Token");
         setIsValid("");
       }
     } catch (error) {

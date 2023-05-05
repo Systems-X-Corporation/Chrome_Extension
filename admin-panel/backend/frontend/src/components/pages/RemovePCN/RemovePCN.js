@@ -32,6 +32,7 @@ const [successMessage, setSuccessMessage] = useState("");
     try {
       const res = await axios.get(`http://localhost:8000/remove-pcn?Plexus_Customer_No=${Pcn}`);
       if (res.data.success) {
+        setPcn("")
         setSuccessMessage("PCN Removed successfully");
         setErrorMessage("");
       } else {
