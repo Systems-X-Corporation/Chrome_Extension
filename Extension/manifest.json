@@ -1,11 +1,11 @@
 {
-    "name": "Systems-X PLEX WorkHelper",
+    "name": "Systems X Connect",
     "description": "Systems-X's web extension for PLEX ERP enhancements.",
     "version": "0.1",
     "manifest_version": 3,
     "action": {
         "default_icon": "images/sx-plex-logo.png",
-        "default_title": "PLEX WorkHelper",
+        "default_title": "Systems X Connect",
         "default_popup": "html/popup.html"
     },
     "icons": {
