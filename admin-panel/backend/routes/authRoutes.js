@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 // const Admin = require('../models/admin');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 let token;
 // Signup route
 const now = new Date();
@@ -9,11 +10,15 @@ const formattedDate = now.toISOString();
 router.post('/signup', async (req, res) => {
   try {
     const { name,lastName, email, password } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
+    const plaintextPassword = password;
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPass = bcrypt.hashSync(plaintextPassword,salt);
 
     // Check if admin already exists with same email
     const checkQuery = `SELECT * FROM Admin_Portal_Users WHERE Email	= '${email}'`;
-    console.log("checkQuery",checkQuery);
+    // console.log("checkQuery",checkQuery);
 connection.query(checkQuery,(error,results,fields)=>{
   if(error){
     console.error("Admin already exists with this email");
@@ -24,7 +29,7 @@ connection.query(checkQuery,(error,results,fields)=>{
     return res.status(400).json({ error: 'Admin already exists with this email' });
   
   }
-  const inserQuery = `INSERT INTO Admin_Portal_Users (Name, Last_Name	, Email,Password,Update_Date) VALUES ('${name}', '${lastName}','${email}', '${password}','${formattedDate}')`;
+  const inserQuery = `INSERT INTO Admin_Portal_Users (Name, Last_Name	, Email,Password,Update_Date) VALUES ('${name}', '${lastName}','${email}', '${hashedPass}','${formattedDate}')`;
   connection.query(inserQuery,(error,results,fields)=>{
     if(error){
       console.error('Error creating admin:', error);
@@ -48,9 +53,9 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     console.log("req.body",req.body);
 const query = `SELECT * FROM Admin_Portal_Users WHERE Email = '${email}'`;
-console.log(query);
+// console.log(query);
 connection.query(query,(error,results)=>{
-console.log("result.RowDataPacket1",results.recordset);
+// console.log("result.RowDataPacket1",results.recordset);
 // console.log("result.RowDataPacket2",results[0].Admin_User_Email);
 
   if(error){
@@ -61,7 +66,9 @@ console.log("result.RowDataPacket1",results.recordset);
     return res.status(400).json({ error: 'Invalid credentials1' });
   }
   const user = results.recordset[0].Password;
-  if (user !== password) {
+  const passwordMatched = bcrypt.compareSync(password, user);
+
+  if (user !== passwordMatched) {
     return res.status(400).json({ error: 'Invalid credentials2' });
   }
 
@@ -82,7 +89,7 @@ console.log("result.RowDataPacket1",results.recordset);
 // Middleware function to verify the JWT token
 const verifyToken = (req, res, next) => {
   const token = req.body.token;
-  console.log("TOKENN",token);
+  // console.log("TOKENN",token);
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }
