@@ -66,9 +66,11 @@ connection.query(query,(error,results)=>{
     return res.status(400).json({ error: 'Invalid credentials1' });
   }
   const user = results.recordset[0].Password;
-  const passwordMatched = bcrypt.compareSync(password, user);
 
-  if (user !== passwordMatched) {
+  const passwordMatched = bcrypt.compareSync(password, user);
+console.log(passwordMatched);
+
+  if (!passwordMatched) {
     return res.status(400).json({ error: 'Invalid credentials2' });
   }
 
