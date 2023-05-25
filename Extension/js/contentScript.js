@@ -3,7 +3,8 @@ let data = [];
 let hierarchyArr = [];
 let pcnarr;
 let authToken;
-
+let pcnEmail;
+let pcnPassword;
 // For loop for finding the PCN number from frontend
 let scripts = document.getElementsByTagName("script");
 for (let i = 0; i < scripts.length; i++) {
@@ -18,20 +19,48 @@ pcnarr = pcnarr.split("'")[0];
 pcnarr = pcnarr.split(/\\/).join("");
 pcnarr = JSON.parse(pcnarr);
 const pcn = pcnarr.customer.pcn;
-console.log(pcn);
+console.log("pcn", pcn);
 // Adding the PCN number to the local storage
 chrome.storage.local.set({ pcn: pcn }).then(() => {});
 
 // Function for Calling Api
-function requestingDataApi() {
+
+async function requestingDataApi() {
   // If we open the https://cloud.plex.com then this if condition api called
   if (document.location.href.includes("https://cloud.plex.com/")) {
+    await fetch("http://localhost:8000/get-Ws", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("DATAAAAA", data.recordset);
+        {
+          data.recordset &&
+            data.recordset.map((item) => {
+              if (item.Plexus_Customer_No === pcn) {
+                pcnEmail = item.Email;
+                pcnPassword = item.Password;
+              }
+            });
+        }
+
+        // Handle the response from the server
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    console.log("pcnEmail", pcnEmail);
+    console.log("pcnPassword", pcnPassword);
+    const encodedCredentials = btoa(`${pcnEmail}:${pcnPassword}`);
     var settings = {
       url: `https://cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate`,
       method: "POST",
       timeout: 0,
       headers: {
-        Authorization: "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
+        Authorization: `Basic ${encodedCredentials}`,
         "Content-Type": "application/json",
       },
       // Requesting for Description_With_Hierarchy data with api
@@ -45,7 +74,13 @@ function requestingDataApi() {
     $.ajax(settings).done(function (response) {
       // Response from the api will stored in data array
       data = response;
+      console.log(data);
       treeviwrecall();
+      // console.log(response);
+    });
+    $.ajax(settings).fail(function (error) {
+      // Response from the api will stored in data array
+      console.error("ERROR", error);
       // console.log(response);
     });
   }
@@ -70,7 +105,9 @@ function requestingDataApi() {
 
     $.ajax(settings).done(function (response) {
       // Response from the api will stored in data array
+
       data = response;
+      console.log(data);
       treeviwrecall();
       // console.log(response);
     });
@@ -114,11 +151,12 @@ function AuthSuccess() {
       // Condition for Tree view checkbox
       chrome.storage.local.get(["ShowTree"]).then((result) => {
         showtreeview = result.ShowTree;
-        console.log("result", result);
-        if (showtreeview == true) {
+        console.log("result", showtreeview);
+        if (showtreeview === true) {
           // Condition for Tree Token Value
           chrome.storage.local.get(["TokenValue"]).then((result) => {
             Token = result.TokenValue;
+            console.log("TOKENNNN", Token);
             if (Token) {
               findingPickerSearchResult();
               // Checking the api data
@@ -243,6 +281,7 @@ function createTreeviweData() {
     hierarchyArr = [];
     // console.log(hierarchyArr);
     function createHierarchyArr(Last_DAta, node, parent) {
+      // console.log(Last_DAta);
       if (Last_DAta.length > 0) {
         for (let i = 0; i < Last_DAta.length; i++) {
           const item = Last_DAta[i];
@@ -272,6 +311,7 @@ function createTreeviweData() {
         id: val,
         children: [],
       };
+      // console.log("NODE",node);
       // If parrent of any obejct is null
       if (parent == null) {
         // pusshing the node in hierarchyArr Array
@@ -304,9 +344,11 @@ async function settingTreeview() {
 
   // Creating the hierarchy view with hierarchyArr data
   function createHierarchyView(hierarchyArr) {
+    // console.log("hierarchyArr",hierarchyArr);
     let html = `<ul class="folder-tree">`;
     for (let i = 0; i < hierarchyArr.length; i++) {
       const item = hierarchyArr[i];
+      // console.log(item);
       html += `<li> <span>${item.name}</span> `;
       if (item.children && item.children.length > 0) {
         html += createHierarchyView(item.children);
@@ -397,10 +439,9 @@ chrome.storage.local.get(["TokenValue"]).then((result) => {
   $.ajax(settings).done(function (response) {
     console.log(response);
     // chrome.runtime.sendMessage({ type: 'data', data:response.exists });
-    chrome.storage.local.set({ exists: response.exists })
+    chrome.storage.local.set({ exists: response.exists });
     if (response.exists == true) {
       AuthSuccess();
     }
-
   });
 });

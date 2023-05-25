@@ -5,6 +5,8 @@ import AdminPage from "../AdminPage/AdminPage";
 
 function GeneratePCNForm() {
   const [pcn, setPcn] = useState("");
+  const [email,setEmail] = useState("");
+  const[password,setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -36,6 +38,8 @@ function GeneratePCNForm() {
     try {
       const response = await axios.post("http://localhost:8000/generate-pcn", {
         Plexus_Customer_No: pcn,
+        Email:email,
+        Password:password
       });
       const data = response.data;
       console.log("DATAAA",data);
@@ -73,13 +77,31 @@ function GeneratePCNForm() {
         <div>
       <AdminPage />
       <form className="generatepcn-form" onSubmit={handleSubmit}>
-        <label>
+        <label className="labelClass">
           PCN:
-          <input
+          <input required
             className="generatepcn-input"
             type="text"
             value={pcn}
             onChange={(event) => setPcn(event.target.value)}
+          />
+        </label>
+        <label className="labelClass">
+          Email:
+          <input required
+            className="generatepcn-input"
+            type="text"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </label>
+        <label className="labelClass" style={{marginLeft:"-15px"}}>
+          Password:
+          <input required
+            className="generatepcn-input"
+            type="text"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
           />
         </label>
         <button onClick={handleGenerateToken} type="submit" class="generatepcn-button">
