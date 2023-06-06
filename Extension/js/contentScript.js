@@ -87,12 +87,39 @@ async function requestingDataApi() {
   // If we open the https://test.cloud.plex.com then this if condition api called
   if (document.location.href.includes("https://test.cloud.plex.com/")) {
     console.log("hello test");
+    await fetch("http://localhost:8000/get-Ws", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("DATAAAAA", data.recordset);
+        {
+          data.recordset &&
+            data.recordset.map((item) => {
+              if (item.Plexus_Customer_No === pcn) {
+                pcnEmail = item.Email;
+                pcnPassword = item.Password;
+              }
+            });
+        }
+
+        // Handle the response from the server
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    console.log("pcnEmail", pcnEmail);
+    console.log("pcnPassword", pcnPassword);
+    const encodedCredentials = btoa(`${pcnEmail}:${pcnPassword}`);
     var settings = {
       url: "https://test.cloud.plex.com/api/datasources/234347/execute?Content-Type=application/json;charset=utf-8&Accept=application/json&Accept-Encoding=gzio,deflate",
       method: "POST",
       timeout: 0,
       headers: {
-        Authorization: "Basic U3lzdGVtc1hXc0BwbGV4LmNvbTphYWE2YTg2LTQxMw==",
+        Authorization: `Basic ${encodedCredentials}`,
         "Content-Type": "application/json",
       },
       // Requesting for Description_With_Hierarchy data with api
