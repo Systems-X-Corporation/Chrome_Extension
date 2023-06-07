@@ -16,8 +16,10 @@ const Login = () => {
 
     if (validateForm()) {
     try {
-      const response = await axios.post('/login', { email, password });
-      console.log(response.data);
+      console.log(email);
+      console.log(password);
+      const response = await axios.post('http://localhost:8000/login', { email, password });
+      console.log("response.data",response.data);
       if(response.data) {
         const token = response.data.token;
       localStorage.setItem('token', token);

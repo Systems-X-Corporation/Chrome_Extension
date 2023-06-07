@@ -5,31 +5,41 @@ body {
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 .Wrapper_div_Extension {
-  width: 300px;
+  width: 240px;
+  /* height: 352px; */
+  box-sizing: border-box;
   padding: 10px 0;
-  background-color: #707070;
+  /* background-color: #707070; */
+  background-color: #110e0e;
   border-radius: 15px;
 }
 .logo_wrapper_system_x p {
-  font-size: 1.25rem;
+  /* font-size: 1.25rem; */
+  font-size: 15px;
   font-weight: 300;
   width: max-content;
-  margin: 0 auto;
+  margin: 18px auto 0 auto;
+  color: #fff;
 }
 
 .logo_div {
-  margin: auto;
-  max-width: 240px;
-  margin-bottom: 20px;
-  margin-top: 20px;
+  justify-content: space-between;
+  display: flex;
+  padding: 5px;
+  /* margin: auto; */
+  /* max-width: 240px; */
+  /* margin-bottom: 20px; */
+  /* margin-top: 20px; */
 }
 .logo_wrapper_system_x img {
-  width: 100%;
+  width: 60%;
+  /* margin: 0; */
 }
 .Plex_links {
   width: max-content;
   margin: auto;
-  visibility: hidden;
+  /* visibility: hidden; */
+  display: none;
 }
 .plex_btn:hover {
   color: #fff;
@@ -53,22 +63,30 @@ body {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
 .input_area_token {
-  margin: 10px auto;
-  width: max-content;
+  /* margin: 0 auto; */
+  /* width: max-content; */
+  text-align: center;
+  /* margin: 10px 0 0 32px; */
 }
 
-.input_area_token button {
-  height: 30px;
-}
+
 
 .input_area_token input {
   height: 24px;
+  /* height: 100px; */
+  /* width: 230px; */
+  border-radius: 5px;
+  /* outline: none; */
+  border: none;
 }
 .CheckboxContainer {
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
+  /* text-align: end;
+  margin-right: 10px; */
 }
 
 .CheckboxContainer p {
@@ -107,4 +125,60 @@ input[type="checkbox"]:checked::before {
 
 input[type="checkbox"]:checked {
   background: #00ed64;
+}
+.buttons{
+  text-align:center;
+}
+
+.buttons .save {
+  display:inline-block;
+  height: 25px;
+  margin-top: 20px;
+  background-color: #5a8e65;
+  color: white;
+  border-radius: 5px;
+  margin-right:-30px ;
+  border:2px solid #fa8178  
+}
+.buttons #quicktoolimg
+{
+  width: 20px;
+  height: 20px;
+
+}
+.buttons .quicktool
+{
+  display:inline-block; 
+  float:right;
+  background: none;
+  border: none;
+  margin-top: 20px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.quicktool {
+  position: relative;
+}
+
+.quicktool:hover .tooltip {
+  display: block;
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  /* top: 100%; */
+  left: 50%;
+  transform: translateX(-50%);
+  /* padding: 8px;
+  background-color: #000; */
+  color: #fff;
+  font-size: 10px;
+  border-radius: 4px;
+  z-index: 1;
+  font-weight: 600;
+}
+[data-position="bottom"] span {
+  top: auto;
+  bottom: 40px;
 }

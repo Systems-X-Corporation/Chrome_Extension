@@ -1,31 +1,44 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const Admin = require('../models/admin');
+// const Admin = require('../models/admin');
 const router = express.Router();
-
+const bcrypt = require('bcrypt');
+let token;
 // Signup route
+const now = new Date();
+const formattedDate = now.toISOString();
 router.post('/signup', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    console.log(req.body);
+    const { name,lastName, email, password } = req.body;
+    // console.log(req.body);
+    const plaintextPassword = password;
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPass = bcrypt.hashSync(plaintextPassword,salt);
 
     // Check if admin already exists with same email
-    const existingUser = await Admin.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Admin already exists with this email' });
+    const checkQuery = `SELECT * FROM Admin_Portal_Users WHERE Email	= '${email}'`;
+    // console.log("checkQuery",checkQuery);
+connection.query(checkQuery,(error,results,fields)=>{
+  if(error){
+    console.error("Admin already exists with this email");
+    res.status(500).json({ error: 'Internal server error' });
+    return;
+  }
+  if(results.recordset.length>0){
+    return res.status(400).json({ error: 'Admin already exists with this email' });
+  
+  }
+  const inserQuery = `INSERT INTO Admin_Portal_Users (Name, Last_Name	, Email,Password,Update_Date) VALUES ('${name}', '${lastName}','${email}', '${hashedPass}','${formattedDate}')`;
+  connection.query(inserQuery,(error,results,fields)=>{
+    if(error){
+      console.error('Error creating admin:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
     }
-
-    // Create a new admin document
-    const admin = new Admin({
-      name,
-      email,
-      password
-    });
-
-    // Save the admin document
-    await admin.save();
-
     res.status(201).json({ message: 'Admin created successfully' });
+  })
+})
 
   } catch (error) {
     console.error(error);
@@ -35,25 +48,39 @@ router.post('/signup', async (req, res) => {
 
 // Login route
 router.post('/login', async (req, res) => {
+
   try {
     const { email, password } = req.body;
-    console.log(req.body);
+    console.log("req.body",req.body);
+const query = `SELECT * FROM Admin_Portal_Users WHERE Email = '${email}'`;
+// console.log(query);
+connection.query(query,(error,results)=>{
+// console.log("result.RowDataPacket1",results.recordset);
+// console.log("result.RowDataPacket2",results[0].Admin_User_Email);
 
-    // Find the user document with the matching email
-    const user = await Admin.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' });
-    }
+  if(error){
+    console.error(error);
+      return res.status(500).json({ error: 'Internal server error' });
+  }
+  if(results.recordset.length===0){
+    return res.status(400).json({ error: 'Invalid credentials1' });
+  }
+  const user = results.recordset[0].Password;
 
-    // Compare the password
-    if (user.password !== password) {
-      return res.status(400).json({ error: 'Invalid credentials' });
-    }
+  const passwordMatched = bcrypt.compareSync(password, user);
+console.log(passwordMatched);
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_TOKEN, { expiresIn: '1h' });
+  if (!passwordMatched) {
+    return res.status(400).json({ error: 'Invalid credentials2' });
+  }
+
+    token = jwt.sign({ userId: query._id }, process.env.JWT_TOKEN, { expiresIn: '1h' });
 
     res.json({ token });
+})
+
+    // Generate a JWT token
+   
 
   } catch (error) {
     console.error(error);
@@ -64,6 +91,7 @@ router.post('/login', async (req, res) => {
 // Middleware function to verify the JWT token
 const verifyToken = (req, res, next) => {
   const token = req.body.token;
+  // console.log("TOKENN",token);
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }

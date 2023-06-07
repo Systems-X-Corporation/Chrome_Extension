@@ -1,13 +1,52 @@
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path')
 const cors = require("cors");
+// const mysql = require('mysql');
+const mssql = require('mssql');
 require('dotenv').config();
 
+// global.connection= mysql.createConnection({
+//   host:"localhost",
+//   user:"root",
+//   password:"",
+//   database:"test2"
+// })
+
+// connection.connect((err)=>{
+//   if(err){
+//     console.log(err)
+//     return
+//   }
+//   console.log("DATABASE CONNECTED");
+// })
+
+const config = {
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  server:process.env.SERVER,
+  database:process.env.DATABASE,
+  options: {
+    encrypt: true // use encrypted connection
+  }
+};
+global.connection = mssql.connect(config,function(err){
+ 
+  if (err) console.log(err);
+  console.log("DATABASE CONNECTED");
+  // create Request object
+     
+  // query to the database and get the records
+  connection.query('select * from Admin_Portal_Users', function (err, result) {
+      
+      if (err) console.log(err)
+      // send records as a response
+  })
+})  
 const authRoutes = require('./routes/authRoutes');
 const pcnRoutes = require('./routes/pcnRoutes');
-
+const { error } = require('console');
 const app = express();
 app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
@@ -15,12 +54,6 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB...'))
-  .catch((err) => console.error('Could not connect to MongoDB...', err));
-
-// app.use('/api/auth', authRoutes);
-// app.use('/api/pcn', pcnRoutes);
 app.use('/', authRoutes);
 // app.use('/pcn', pcnRoutes);
 app.use('/', pcnRoutes);
@@ -31,3 +64,4 @@ app.get('*', (req, res) => {
 app.listen(process.env.PORT || 8000, () => {
   console.log(`Listening on port ${process.env.PORT || 8000}...`);
 });
+module.exports = connection

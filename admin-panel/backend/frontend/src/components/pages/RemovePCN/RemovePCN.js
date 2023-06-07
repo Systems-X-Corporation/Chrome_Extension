@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "./RemovePCN.css";
-import AdminPage from '../../pages/AdminPage/AdminPage';
+import AdminPage from '../AdminPage/AdminPage';
 
 function RemovePCN() {
   const [Pcn, setPcn] = useState('');
@@ -16,7 +16,7 @@ const [successMessage, setSuccessMessage] = useState("");
     } else {
       // Verify the token on the server
       axios
-        .post('/api/auth/verify', { token })
+        .post('http://localhost:8000/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -30,8 +30,9 @@ const [successMessage, setSuccessMessage] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(`/remove-pcn?Pcn=${Pcn}`);
+      const res = await axios.get(`http://localhost:8000/remove-pcn?Plexus_Customer_No=${Pcn}`);
       if (res.data.success) {
+        setPcn("")
         setSuccessMessage("PCN Removed successfully");
         setErrorMessage("");
       } else {

@@ -11,12 +11,19 @@
 
 <body>
     <div class="Wrapper_div_Extension">
+        
         <div class="logo_wrapper_system_x">
+           
             <div class="logo_div">
-                <img src="../images/sx-logo.png">
+                <img src="../images/Systems X Logo v9.1_HorizontalText_Alt.png">
+                <div class="CheckboxContainer">
+                    <input disabled type="checkbox" id="EquipmentCheck" name="EquipmentCheck" value="EquipmentCheck">
+                    <!-- <p>Equipment ID Tree view</p> -->
+                </div>
             </div>
-            <p>PLEX WorkHelper
-            </p>
+          
+            
+            <p style="font-weight: 600;">SYSTEMS X CONNECT</p>
             <br>
         </div>
         <div class="Plex_links">
@@ -24,13 +31,17 @@
             <button id="plexclassic" class="plex_btn">Go to PLEX Classic</button>
         </div>
         <div class="input_area_token">
-            <input id="Token_input" type="text">
-            <button class="save" id="tokensavebtn" disabled>Save</button>
+            <input placeholder="Enter Token" id="Token_input" type="text"><br>
+            <p id="isverify" style="color: white;"></p>
+            <div class="buttons">            
+            <button type="button" class="save" id="tokensavebtn">Save</button>
+            <button data-position="bottom" class="quicktool">
+                <img class="ex" src="../images/quicktool.png" id="quicktoolimg">
+                <span data-position="top" class="tooltip">Contact Us!</span>
+            </button> 
+            </div>
         </div>
-        <div class="CheckboxContainer">
-            <input type="checkbox" id="EquipmentCheck" name="EquipmentCheck" value="EquipmentCheck">
-            <p>Equipment ID Tree view</p>
-        </div>
+       
     </div>
     <script src="../js/popup.js"></script>
 </body>

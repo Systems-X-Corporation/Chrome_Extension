@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import AdminPage from "../../pages/AdminPage/AdminPage";
+import AdminPage from "../AdminPage/AdminPage";
 import "./VerifyPCN.css";
 
 function VerifyPCN() {
@@ -17,7 +17,7 @@ function VerifyPCN() {
     } else {
       // Verify the token on the server
       axios
-        .post('/api/auth/verify', { token })
+        .post('http://localhost:8000/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -31,16 +31,16 @@ function VerifyPCN() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("/verify-pcn", {
-        Pcn: pcn,
+      const response = await axios.post("http://localhost:8000/verify-pcn", {
+        Plexus_Customer_No: pcn,
         Token: token,
       });
       console.log(response.data);
       if (response.data.exists) {
-        setIsValid("PCN Verified Successfully");
+        setIsValid("Verified Token");
         setIsNotValid("");
       } else {
-        setIsNotValid("PCN Is Not Verified");
+        setIsNotValid("Invalid Token");
         setIsValid("");
       }
     } catch (error) {
