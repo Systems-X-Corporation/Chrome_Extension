@@ -23,10 +23,11 @@ require('dotenv').config();
 // })
 
 const config = {
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  server:process.env.SERVER,
-  database:process.env.DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server:process.env.DB_SERVER,
+  port:process.env.DB_PORT,
+  database:process.env.DB_NAME,
   options: {
     encrypt: true // use encrypted connection
   }
