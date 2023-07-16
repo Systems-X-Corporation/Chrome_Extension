@@ -20,7 +20,7 @@ function PCNList() {
     } else {
       // Verify the token on the server
       axios
-        .post("https://adminchrome.azurewebsites.net/api/auth/verify", { token })
+        .post("backend-adminchrome.azurewebsites.net/api/auth/verify", { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -34,7 +34,7 @@ function PCNList() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("https://adminchrome.azurewebsites.net/get-all-pcn");
+        const response = await axios.get("backend-adminchrome.azurewebsites.net/get-all-pcn");
         setPcns(response.data.recordset);
       } catch (error) {
         setError(error);
