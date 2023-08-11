@@ -48,7 +48,7 @@ const authRoutes = require('./routes/authRoutes');
 const pcnRoutes = require('./routes/pcnRoutes');
 const { error } = require('console');
 const app = express();
-app.use(express.static(path.join(__dirname, 'frontend', 'build')));
+//app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -58,9 +58,9 @@ app.use('/', authRoutes);
 // app.use('/pcn', pcnRoutes);
 app.use('/', pcnRoutes);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
-});
+//app.get('*', (req, res) => {
+//  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+//});
 app.listen(process.env.PORT || 8000, () => {
   console.log(`Listening on port ${process.env.PORT || 8000}...`);
 });
