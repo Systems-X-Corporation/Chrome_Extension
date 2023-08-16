@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/c9759d9f-91b2-4714-b1d9-72703e7c7d0f/resourceGroups/Chrome_Extension/providers/Microsoft.Web/sites/ce-adminpanel",
-    "appService.deploySubpath": "."
-}
