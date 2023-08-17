@@ -18,7 +18,7 @@ const Login = () => {
     try {
       console.log(email);
       console.log(password);
-      const response = await axios.post('backend-adminchrome.azurewebsites.net/login', { email, password });
+      const response = await axios.post('https://backend-adminchrome.azurewebsites.net/login', { email, password });
       console.log("response.data",response.data);
       if(response.data) {
         const token = response.data.token;

@@ -17,7 +17,7 @@ function VerifyPCN() {
     } else {
       // Verify the token on the server
       axios
-        .post('backend-adminchrome.azurewebsites.net/api/auth/verify', { token })
+        .post('https://backend-adminchrome.azurewebsites.net/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -31,7 +31,7 @@ function VerifyPCN() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("backend-adminchrome.azurewebsites.net/verify-pcn", {
+      const response = await axios.post("https://backend-adminchrome.azurewebsites.net/verify-pcn", {
         Plexus_Customer_No: pcn,
         Token: token,
       });

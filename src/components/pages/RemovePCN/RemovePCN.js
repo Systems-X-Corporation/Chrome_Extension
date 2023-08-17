@@ -16,7 +16,7 @@ const [successMessage, setSuccessMessage] = useState("");
     } else {
       // Verify the token on the server
       axios
-        .post('backend-adminchrome.azurewebsites.net/api/auth/verify', { token })
+        .post('https://backend-adminchrome.azurewebsites.net/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -30,7 +30,7 @@ const [successMessage, setSuccessMessage] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(`backend-adminchrome.azurewebsites.net/remove-pcn?Plexus_Customer_No=${Pcn}`);
+      const res = await axios.get(`https://backend-adminchrome.azurewebsites.net/remove-pcn?Plexus_Customer_No=${Pcn}`);
       if (res.data.success) {
         setPcn("")
         setSuccessMessage("PCN Removed successfully");
