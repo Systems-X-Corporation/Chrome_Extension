@@ -1,9 +1,7 @@
 const express = require('express');
-// const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path')
 const cors = require("cors");
-// const mysql = require('mysql');
 const mssql = require('mssql');
 require('dotenv').config();
 
@@ -25,27 +23,29 @@ require('dotenv').config();
 const config = {
   user: process.env.USER,
   password: process.env.PASSWORD,
-  server:process.env.SERVER,
-  database:process.env.DATABASE,
+  server: process.env.SERVER,
+  database: process.env.DATABASE,
   options: {
     encrypt: true // use encrypted connection
   }
 };
-global.connection = mssql.connect(config,function(err){
- 
+global.connection = mssql.connect(config, function (err) {
+
   if (err) console.log(err);
   console.log("DATABASE CONNECTED");
   // create Request object
-     
+
   // query to the database and get the records
   connection.query('select * from Admin_Portal_Users', function (err, result) {
-      
-      if (err) console.log(err)
-      // send records as a response
+
+    if (err) console.log(err)
+    // send records as a response
   })
-})  
+})
 const authRoutes = require('./routes/authRoutes');
 const pcnRoutes = require('./routes/pcnRoutes');
+const workcenterRoutes = require('./routes/workcenterRoutes');
+
 const { error } = require('console');
 const app = express();
 app.use(express.static(path.join(__dirname, 'frontend', 'build')));
@@ -55,8 +55,8 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.use('/', authRoutes);
-// app.use('/pcn', pcnRoutes);
 app.use('/', pcnRoutes);
+app.use('/', workcenterRoutes);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));

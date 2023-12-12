@@ -10,6 +10,7 @@ function PCNList() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [switchValue, setSwitchValue] = useState("");
   const itemsPerPage = 20;
 
   useEffect(() => {
@@ -63,6 +64,39 @@ function PCNList() {
     setCurrentPage(Number(e.target.textContent));
   };
 
+  // Function to update the pin by index
+  const updatePinByIndex = (e, index) => {
+
+    e.preventDefault();
+
+    // Make a copy of the original data array
+    const updatedData = [...pcns];
+
+    // Update the pin at the specified index
+    updatedData[index].Pin = e.target.value;
+
+    console.log("updatedData =>", updatedData);
+
+    // Update the state with the modified data
+    setPcns(updatedData);
+  };
+
+  const resetPin = (e, index) => {
+    console.log("pcns =>", pcns[index]);
+    // Reset Pin
+    axios
+      .post("http://localhost:8000/reset-pin", { data: pcns[index] })
+      .then((res) => {
+        const data = res.data.message;
+        console.log(data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log("error =>", error.response.data.error);
+        alert(error.response.data.error)
+      });
+  }
+
   return (
     <div>
       <AdminPage />
@@ -81,7 +115,9 @@ function PCNList() {
             <tr>
               <th>S.No.</th>
               <th>PCN</th>
+              <th>PCN Name</th>
               <th>TOKEN</th>
+              <th>PIN</th>
             </tr>
           </thead>
           <tbody>
@@ -94,15 +130,38 @@ function PCNList() {
                 <tr className="success" key={index}>
                   <td>{index + 1}</td>
                   <td>{pcn.Plexus_Customer_No}</td>
-                  <td style={{display:"flex"}} id={`input-${index+1}`}>{pcn.Token}
-                   <button
-                    data-clipboard-action="copy"
-                    data-clipboard-target={`#input-${index+1}`}
-                    className="copy-text">
-                    <TbCopy style={{ cursor: "pointer" }} />
-                  </button>
+                  <td>{pcn.Plexus_Customer_Name}</td>
+                  <td style={{ display: "flex" }} id={`input-${index + 1}`}>{pcn.Token}
+                    <button
+                      data-clipboard-action="copy"
+                      data-clipboard-target={`#input-${index + 1}`}
+                      className="copy-text">
+                      <TbCopy style={{ cursor: "pointer" }} />
+                    </button>
                   </td>
-                 
+                  {
+                    switchValue === `reset${index}` ?
+                      <td>
+                        <input required
+                          className="generatepcn-input"
+                          type="number"
+                          value={pcn.Pin}
+                          onChange={(event) => updatePinByIndex(event, index)}
+                        />
+                        <button onClick={(e) => resetPin(e, index)} class="generatepcn-button">
+                          Save
+                        </button>
+                        <button onClick={() => { setSwitchValue(``); window.location.reload(true); }} class="generatepcn-button">
+                          Cancel
+                        </button>
+                      </td>
+                      :
+                      <td>{pcn.Pin}
+                        <button onClick={() => setSwitchValue(`reset${index}`)} class="generatepcn-button">
+                          Reset Pin
+                        </button>
+                      </td>
+                  }
                 </tr>
               ))
             )}

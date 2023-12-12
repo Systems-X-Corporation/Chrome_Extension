@@ -1,17 +1,17 @@
 {
-    "name": "Systems X Connect",
+    "name": "Systems X Toolbox",
     "description": "Systems-X's web extension for PLEX ERP enhancements.",
     "version": "0.1",
     "manifest_version": 3,
     "action": {
-        "default_icon": "images/sx-plex-logo.png",
-        "default_title": "Systems X Connect",
+        "default_icon": "images/SXIcon_toolbox.png",
+        "default_title": "Systems X Toolbox",
         "default_popup": "html/popup.html"
     },
     "icons": {
-        "16": "images/sx-plex-logo.png",
-        "48": "images/sx-plex-logo.png",
-        "128": "images/sx-plex-logo.png"
+        "16": "images/SXIcon_toolbox.png",
+        "48": "images/SXIcon_toolbox.png",
+        "128": "images/SXIcon_toolbox.png"
     },
     "permissions": [
         "scripting",
@@ -34,13 +34,15 @@
         {
             "js": [
                 "js/jquery.js",
-                "js/contentScript.js"
+                "js/contentScript.js",
+                "js/content_Script.js"
             ],
             "css": [
                 "css/style.css"
             ],
             "matches": [
-                "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*"
+                "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*",
+                "*://*.plex.com/ControlPanel/Production?WorkcenterKey*"
             ],
             "run_at": "document_end"
         }

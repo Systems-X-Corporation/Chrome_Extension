@@ -155,3 +155,11 @@
     opacity: 0;
   }
 }
+
+.button_new {
+  height: 40px;
+  border-radius: 3px;
+  border: 1px solid #289664 !important;
+  background-image: linear-gradient(#ff0000 0%, #b30000 100%) !important;
+  position:unset;
+}

@@ -57,7 +57,7 @@ function VerifyPCN() {
             <label htmlFor="pcn">PCN:</label>
             <input
               className="verifypcn-input"
-              type="text"
+              type="number"
               id="pcn"
               value={pcn}
               onChange={(e) => setPcn(e.target.value)}

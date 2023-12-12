@@ -5,8 +5,10 @@ import AdminPage from "../AdminPage/AdminPage";
 
 function GeneratePCNForm() {
   const [pcn, setPcn] = useState("");
-  const [email,setEmail] = useState("");
-  const[password,setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pin, setPin] = useState("");
+  const [pcnName, setPcnName] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -38,11 +40,13 @@ function GeneratePCNForm() {
     try {
       const response = await axios.post("http://localhost:8000/generate-pcn", {
         Plexus_Customer_No: pcn,
-        Email:email,
-        Password:password
+        Email: email,
+        Password: password,
+        Plexus_Customer_Name: pcnName,
+        Pin: pin
       });
       const data = response.data;
-      console.log("DATAAA",data);
+      console.log("DATAAA", data);
       if (data) {
         setShowPopup(true);
         setSuccessMessage(data.Token);
@@ -74,43 +78,61 @@ function GeneratePCNForm() {
 
   return (
     <div className="container">
-        <div>
-      <AdminPage />
-      <form className="generatepcn-form" onSubmit={handleSubmit}>
-        <label className="labelClass">
-          PCN:
-          <input required
-            className="generatepcn-input"
-            type="text"
-            value={pcn}
-            onChange={(event) => setPcn(event.target.value)}
-          />
-        </label>
-        <label className="labelClass">
-          Email:
-          <input required
-            className="generatepcn-input"
-            type="text"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </label>
-        <label className="labelClass" style={{marginLeft:"-15px"}}>
-          Password:
-          <input required
-            className="generatepcn-input"
-            type="text"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </label>
-        <button onClick={handleGenerateToken} type="submit" class="generatepcn-button">
-        Generate Token
-        </button>
-        {errorMessage && (
-          <p className="error-message">{errorMessage}</p>
-        )}
-      </form>
+      <div>
+        <AdminPage />
+        <form className="generatepcn-form" onSubmit={handleSubmit}>
+          <label className="labelClass">
+            PCN:
+            <input required
+              className="generatepcn-input"
+              type="number"
+              value={pcn}
+              onChange={(event) => setPcn(event.target.value)}
+            />
+          </label>
+          <label className="labelClass" style={{ marginLeft: "-35px" }}>
+            PCN Name:
+            <input required
+              className="generatepcn-input"
+              type="text"
+              value={pcnName}
+              onChange={(event) => setPcnName(event.target.value)}
+            />
+          </label>
+          <label className="labelClass" style={{ marginLeft: "2px" }}>
+            Email:
+            <input required
+              className="generatepcn-input"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+          <label className="labelClass" style={{ marginLeft: "-25px" }}>
+            Password:
+            <input required
+              className="generatepcn-input"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          <label className="labelClass" style={{ marginLeft: "15px" }}>
+            PIN:
+            <input required
+              className="generatepcn-input"
+              type="number"
+              value={pin}
+              onChange={(event) => setPin(event.target.value)}
+            />
+          </label>
+          <button onClick={handleGenerateToken} type="submit" class="generatepcn-button">
+            Generate Token
+          </button>
+          {errorMessage && (
+            <p className="error-message">{errorMessage}</p>
+          )}
+        </form>
       </div>
       {showPopup && (
         <div className="popup">

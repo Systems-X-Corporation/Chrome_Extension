@@ -1,8 +1,12 @@
 body {
   background-color: grey;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  margin: 3px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.main {
+  /* background-color: grey; */
+  color: white;
 }
 .Wrapper_div_Extension {
   width: 240px;
@@ -11,7 +15,7 @@ body {
   padding: 10px 0;
   /* background-color: #707070; */
   background-color: #110e0e;
-  border-radius: 15px;
+  border-radius: 6px;
 }
 .logo_wrapper_system_x p {
   /* font-size: 1.25rem; */
@@ -71,8 +75,6 @@ body {
   /* margin: 10px 0 0 32px; */
 }
 
-
-
 .input_area_token input {
   height: 24px;
   /* height: 100px; */
@@ -93,7 +95,7 @@ body {
   margin-left: 10px;
 }
 
-input[type="checkbox"] {
+.toggle {
   position: relative;
   width: 40px;
   height: 20px;
@@ -106,7 +108,7 @@ input[type="checkbox"] {
   box-shadow: inset 0 0 5px rgb(0 0 0 / 50%);
 }
 
-input[type="checkbox"]::before {
+.toggle:before {
   content: "";
   width: 20px;
   height: 20px;
@@ -118,38 +120,36 @@ input[type="checkbox"]::before {
   transition: 0.5s;
 }
 
-input[type="checkbox"]:checked::before {
+.toggle:checked::before {
   transform: translateX(100%);
   background: #fff;
 }
 
-input[type="checkbox"]:checked {
+.toggle:checked {
   background: #00ed64;
 }
-.buttons{
-  text-align:center;
+.buttons {
+  text-align: center;
 }
 
 .buttons .save {
-  display:inline-block;
+  display: inline-block;
   height: 25px;
   margin-top: 20px;
-  background-color: #5a8e65;
+  background-color: #199d43;
   color: white;
   border-radius: 5px;
-  margin-right:-30px ;
-  border:2px solid #fa8178  
+  /* margin-right:-30px ; */
+  border: none;
+  width: 60px;
 }
-.buttons #quicktoolimg
-{
+.buttons #quicktoolimg {
   width: 20px;
   height: 20px;
-
 }
-.buttons .quicktool
-{
-  display:inline-block; 
-  float:right;
+.buttons .quicktool {
+  display: inline-block;
+  float: right;
   background: none;
   border: none;
   margin-top: 20px;
@@ -181,4 +181,268 @@ input[type="checkbox"]:checked {
 [data-position="bottom"] span {
   top: auto;
   bottom: 40px;
+}
+
+.buttons .settings {
+  display: inline-block;
+  float: left;
+  background: none;
+  border: none;
+  margin-top: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.settings:hover {
+  color: rgba(16, 206, 249, 1);
+}
+
+#isverify {
+  margin-bottom: 0;
+}
+
+#main_control_panel {
+  display: none;
+}
+
+.p-tag {
+  color: white;
+  font-size: 9px;
+  background-color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.p-tag:hover {
+  color: rgba(16, 206, 249, 1);
+}
+
+.panel-tag {
+  color: white;
+  font-size: 9px;
+  background-color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.panel-tag:hover {
+  color: rgba(16, 206, 249, 1);
+}
+.h3-tag {
+  color: white;
+}
+
+.record_check {
+  color: white;
+  display: flex;
+  margin-left: 15px;
+}
+
+.record_check2 {
+  display: flex;
+  margin-top: 10px;
+}
+
+#myCheckbox {
+  color: white;
+}
+
+.percentRate {
+  top: -8px;
+  position: relative;
+}
+
+.production_container {
+  width: 185px;
+  height: auto;
+  padding: 10px;
+  /* height: 143px; */
+  border-radius: 5px;
+  display: none;
+  flex-direction: column;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+.i-div {
+  /* background-color: rgba(161, 161, 161, 1); */
+  width: 42px;
+  height: 20px;
+  gap: 20px;
+  border-radius: 5px;
+  border: 0.2px solid rgba(59, 63, 68, 1);
+}
+
+.main_control_panel {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  background-color: black;
+  /* height: 261px; */
+  border-radius: 6px;
+  /* margin-bottom: 30px; */
+}
+
+.navigate_panel {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-around; */
+  align-items: center;
+}
+.nav-tags {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 5px;
+}
+
+.h3-tag {
+  font-size: 12px;
+  text-align: center;
+  margin: 10px 0 10px 0;
+}
+
+.inner_container {
+  font-weight: 500;
+}
+
+.button_tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0 5px 0;
+}
+
+.save_btn {
+  width: 67px;
+  height: 25px;
+  border-radius: 4px;
+  gap: 10px;
+  color: #157c36;
+  background-color: white;
+}
+
+.save_btn:hover {
+  background-color: #a3d8b4;
+}
+
+.cancle_btn {
+  width: 70px;
+  height: 25px;
+  /* padding: 3px 10px 3px 10px */
+  border-radius: 4px;
+  background-color: white;
+  color: #d33d28;
+  align-items: center;
+  display: flex;
+}
+
+.cancle_btn:hover {
+  background-color: #edb1a9;
+}
+
+.c-box {
+  width: 15px;
+  height: 15px;
+  margin: 0 0px 10px 10px !important;
+  /* background-color: rgba(0,0,0,0); */
+
+  border: 1px rgba(170, 180, 188, 1) solid;
+}
+
+/* Define a custom class for styling the checkbox */
+.c-box:checked {
+  content: "";
+  display: inline-block;
+  color: white;
+  width: 15px;
+  height: 15px;
+  background-color: rgba(29, 201, 160, 1);
+  border-radius: 2px; /* Makes it look like a filled box
+  margin-right: 5px; /* Add some space between the checkbox and label */
+  content: "✔";
+}
+
+.c-box:checked:after {
+  background-color: rgba(29, 201, 160, 1);
+}
+
+.nine {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.circle {
+  font-size: 9px;
+}
+
+.cp-div {
+  display: none;
+  flex-direction: column;
+}
+
+.maintenance_screen {
+  display: none;
+}
+
+.pin-div {
+  display: none;
+  background-color: #110e0e;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+.pin-container {
+  /* margin-left: 20px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+.pin-input {
+  border-radius: 30px;
+  height: 59px;
+  width: 40px;
+  /* margin-top: 40px; */
+  text-align: center;
+}
+
+#submitBtn {
+  display: inline-block;
+  height: 25px;
+  /* margin-top: 20px; */
+  background-color: #199d43;
+  color: white;
+  border-radius: 5px;
+  /* margin-left: 90px; */
+  margin-left: 36%;
+  /* margin-bottom: 20px; */
+  border: none;
+  /* margin-right:-30px ; */
+  /* border:2px solid #fa8178   */
+}
+
+/* input::-webkit-outer-spin-button,input::-webkit-inner-spin-button
+ {  -webkit-appearance: none;  margin: 0;} */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+#authMessage {
+  color: #fff;
+  padding: 10px;
+  /* position: absolute; 
+   top: 10px;
+  right: 20px;  */
+  text-align: center;
+}
+
+#authMessage1 {
+  display: none;
+  padding: 10px;
+  text-align: center;
 }

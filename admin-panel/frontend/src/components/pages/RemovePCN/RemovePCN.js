@@ -16,7 +16,7 @@ const [successMessage, setSuccessMessage] = useState("");
     } else {
       // Verify the token on the server
       axios
-        .post('http://localhost:8000/api/auth/verify', { token })
+        .post('/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);

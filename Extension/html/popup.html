@@ -2,48 +2,136 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/popup.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../css/popup.css">
 </head>
 
 <body>
-    <div class="Wrapper_div_Extension">
-        
-        <div class="logo_wrapper_system_x">
-           
-            <div class="logo_div">
-                <img src="../images/Systems X Logo v9.1_HorizontalText_Alt.png">
-                <div class="CheckboxContainer">
-                    <input disabled type="checkbox" id="EquipmentCheck" name="EquipmentCheck" value="EquipmentCheck">
-                    <!-- <p>Equipment ID Tree view</p> -->
-                </div>
-            </div>
-          
-            
-            <p style="font-weight: 600;">SYSTEMS X CONNECT</p>
-            <br>
+  <div class="main">
+    <div class="Wrapper_div_Extension" id="Wrapper_div_Extension">
+
+      <div class="logo_wrapper_system_x">
+
+        <div class="logo_div">
+          <img src="../images/Systems X Logo v9.1_HorizontalText_Alt.png">
+          <div class="CheckboxContainer">
+            <input disabled class="toggle" type="checkbox" id="EquipmentCheck" name="EquipmentCheck"
+              value="EquipmentCheck">
+            <!-- <p>Equipment ID Tree view</p> -->
+          </div>
         </div>
-        <div class="Plex_links">
-            <button id="plexux" class="plex_btn">Go to PLEX UX</button><br>
-            <button id="plexclassic" class="plex_btn">Go to PLEX Classic</button>
+
+
+        <p id="extension_heading" style="font-weight: 600;">SYSTEMS X TOOLBOX</p>
+        <br>
+      </div>
+      <div class="Plex_links">
+        <button id="plexux" class="plex_btn">Go to PLEX UX</button><br>
+        <button id="plexclassic" class="plex_btn">Go to PLEX Classic</button>
+      </div>
+      <div class="input_area_token" id="input_area_token">
+        <input placeholder="Enter Token" id="Token_input" type="text"><br>
+        <p id="isverify" style="color: white;"></p>
+        <div class="buttons">
+
+          <button type="button" class="settings" id="settings">
+            <img id="settings-img" class="settings-img" src="../images//Vector (1).png" />
+          </button>
+          <button type="button" class="save" id="tokensavebtn">Save</button>
+          <button data-position="bottom" class="quicktool">
+            <img class="ex" src="../images/quicktool.png" id="quicktoolimg">
+            <span data-position="top" class="tooltip">Contact Us!</span>
+          </button>
         </div>
-        <div class="input_area_token">
-            <input placeholder="Enter Token" id="Token_input" type="text"><br>
-            <p id="isverify" style="color: white;"></p>
-            <div class="buttons">            
-            <button type="button" class="save" id="tokensavebtn">Save</button>
-            <button data-position="bottom" class="quicktool">
-                <img class="ex" src="../images/quicktool.png" id="quicktoolimg">
-                <span data-position="top" class="tooltip">Contact Us!</span>
-            </button> 
-            </div>
-        </div>
-       
+      </div>
+
     </div>
-    <script src="../js/popup.js"></script>
+
+    <div class="main_control_panel" id="main_control_panel">
+      <div class="navigate_panel">
+        <div class="nav-tags">
+          <button class="panel-tag">Control Panel</button>
+          <button class="p-tag">Plant and Equipment Maintence</button>
+        </div>
+        <div id="inner_body" class="inner_body">
+          <div class="cp-div">
+            <h3 class="h3-tag">Cooldown Production</h3>
+            <div class="record_check">
+              <p class="nine" style="margin: 0">Record Production Cooldown</p>
+              <input checked class="c-box" type="checkbox" id="myCheckbox" name="myCheckbox" />
+            </div>
+          </div>
+        </div>
+        <div class="production_container">
+          <div class="percent_rate">
+            <div class="inner_container">
+              <div class="percentRate">
+                <label class="nine">Percentage of Rate</label>
+              <input class="i-div" type="number" required id="percentRate" name="cooldownInput" />
+              </div>
+              <div>
+                <p class="nine" style="margin-top: 0; margin-bottom: 6px">
+                  Workcentre Rate
+                </p>
+                <div class="input_tag">
+                  <input type="radio" id="standard" name="workcenter" value="standard" />
+                  <label for="standard" class="circle">Standard</label>
+                </div>
+
+                <div class="input_tag">
+                  <input type="radio" id="target" name="workcenter" value="target" />
+                  <label for="target" class="circle">Target</label>
+                </div>
+
+                <div class="input_tag">
+                  <input type="radio" id="ideal" name="workcenter" value="ideal" />
+                  <label for="ideal" class="circle">Ideal</label>
+                </div>
+              </div>
+              <label class="nine">Fall back seconds</label>
+              <input class="i-div" type="number" id="fallBack" name="cooldownInput" />
+            </div>
+            <!-- <div class="record_check2">
+                    <p class="nine" style="margin: 0">Global Workcenter Cooldown</p>
+                    <input
+                      class="c-box"
+                      type="checkbox"
+                      id="myCheckbox"
+                      name="myCheckbox" />
+                  </div> -->
+          </div>
+          <div class="button_tag">
+            <button id="save_btn" class="save_btn" type="button">✓ Save</button>
+            <button class="cancle_btn" id="cancle_btn" type="button"><span style="font-size: 19px; font-weight: 400; padding-right: 2px;">×</span> Cancel</button>
+          </div>
+          <div id="authMessage1"></div>
+        </div>
+
+
+      </div>
+
+      <div class="maintenance_screen" id="maintenance_screen" style="display: none">
+        <p style="color: white; font-size: 12px; text-align: center; margin-left: 25px;">Hierarichal view (Included)</p>
+        <input style="margin-left: 15px; width: 15px" type="checkbox" id="hieracyView" name="myCheckbox" />
+      </div>
+    </div>
+  </div>
+  <div class="pin-div" id="pin-div">
+    <div class="pin-container" id="pin-container">
+      <input type="number" class="pin-input" id="pin1" required maxlength="1" min="0" max="9" />
+      <input type="number" class="pin-input" id="pin2" required maxlength="1" min="0" max="9" />
+      <input type="number" class="pin-input" id="pin3" required maxlength="1" min="0" max="9" />
+      <input type="number" class="pin-input" id="pin4" required maxlength="1" min="0" max="9" />
+    </div>
+    <button id="submitBtn">Submit</button>
+  
+    <div id="authMessage"></div>
+  </div>
+
+  <script src="../js/popup.js"></script>
 </body>
 
 </html>
