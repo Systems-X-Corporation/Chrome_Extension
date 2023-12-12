@@ -17,7 +17,7 @@ function VerifyPCN() {
     } else {
       // Verify the token on the server
       axios
-        .post('http://localhost:8000/api/auth/verify', { token })
+        .post('https://backendphase2.azurewebsites.net/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -31,7 +31,7 @@ function VerifyPCN() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/verify-pcn", {
+      const response = await axios.post("https://backendphase2.azurewebsites.net/verify-pcn", {
         Plexus_Customer_No: pcn,
         Token: token,
       });
@@ -57,7 +57,7 @@ function VerifyPCN() {
             <label htmlFor="pcn">PCN:</label>
             <input
               className="verifypcn-input"
-              type="text"
+              type="number"
               id="pcn"
               value={pcn}
               onChange={(e) => setPcn(e.target.value)}
