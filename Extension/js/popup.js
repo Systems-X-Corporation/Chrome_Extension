@@ -167,7 +167,7 @@ const verifyPcn = async (enteredPIN) => {
   };
   console.log(raw);
   let apiResult = await fetch(
-    "http://localhost:8000/verify-pin",
+    "https://backendphase2.azurewebsites.net/verify-pin",
     requestOptions
   );
   apiResult = await apiResult.json();
@@ -363,7 +363,7 @@ chrome.storage.local.get(["TokenValue", "pcn"]).then((result) => {
   authToken = result.TokenValue;
   console.log("REULT", result);
   if (authToken) {
-    fetch("https://backend-adminchrome.azurewebsites.net/verify-pcn", {
+    fetch("https://backendphase2.azurewebsites.net/verify-pcn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

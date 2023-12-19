@@ -30,7 +30,7 @@ const [successMessage, setSuccessMessage] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(`http://localhost:8000/remove-pcn?Plexus_Customer_No=${Pcn}`);
+      const res = await axios.get(`https://backendphase2.azurewebsites.net/remove-pcn?Plexus_Customer_No=${Pcn}`);
       if (res.data.success) {
         setPcn("")
         setSuccessMessage("PCN Removed successfully");

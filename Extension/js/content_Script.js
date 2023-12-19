@@ -125,7 +125,7 @@ if (callAPI === "true" && callAPI !== undefined) {
     ) {
       console.log("hello");
       recordProductionButton.click();
-      fetch("http://localhost:8000/cooldown", {
+      fetch("https://backendphase2.azurewebsites.net/cooldown", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

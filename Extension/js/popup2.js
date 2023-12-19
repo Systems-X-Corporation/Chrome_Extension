@@ -30,7 +30,7 @@ document.querySelector("#save_btn").addEventListener('click',function(){
   chrome.storage.local.get(["TokenValue","pcn"]).then((result) => {
     pcn = result.pcn
     authToken = result.TokenValue;
-    fetch('http://localhost:8000/verify-pcn', {
+    fetch('https://backendphase2.azurewebsites.net/verify-pcn', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

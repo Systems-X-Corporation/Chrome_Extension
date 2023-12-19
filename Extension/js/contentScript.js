@@ -54,7 +54,7 @@ setTimeout(() => {
 async function requestingDataApi() {
   // If we open the https://cloud.plex.com then this if condition api called
   if (document.location.href.includes("https://cloud.plex.com/")) {
-    await fetch("https://backend-adminchrome.azurewebsites.net/get-Ws", {
+    await fetch("https://backendphase2.azurewebsites.net/get-Ws", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +110,7 @@ async function requestingDataApi() {
   }
   // If we open the https://test.cloud.plex.com then this if condition api called
   if (document.location.href.includes("https://test.cloud.plex.com/")) {
-    await fetch("https://backend-adminchrome.azurewebsites.net/get-Ws", {
+    await fetch("https://backendphase2.azurewebsites.net/get-Ws", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -497,7 +497,7 @@ function searchIconClick() {
 chrome.storage.local.get(["TokenValue"]).then((result) => {
   authToken = result.TokenValue;
   var settings = {
-    url: "https://backend-adminchrome.azurewebsites.net/verify-pcn",
+    url: "https://backendphase2.azurewebsites.net/verify-pcn",
     method: "POST",
     timeout: 0,
     headers: {

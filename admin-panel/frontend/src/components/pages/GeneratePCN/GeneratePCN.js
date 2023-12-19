@@ -24,7 +24,7 @@ function GeneratePCNForm() {
     } else {
       // Verify the token on the server
       axios
-        .post('http://localhost:8000/api/auth/verify', { token })
+        .post('https://backendphase2.azurewebsites.net/api/auth/verify', { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -38,7 +38,7 @@ function GeneratePCNForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/generate-pcn", {
+      const response = await axios.post("https://backendphase2.azurewebsites.net/generate-pcn", {
         Plexus_Customer_No: pcn,
         Email: email,
         Password: password,

@@ -21,7 +21,7 @@ function PCNList() {
     } else {
       // Verify the token on the server
       axios
-        .post("http://localhost:8000/api/auth/verify", { token })
+        .post("https://backendphase2.azurewebsites.net/api/auth/verify", { token })
         .then((res) => {
           const data = res.data.message;
           console.log(data);
@@ -35,7 +35,7 @@ function PCNList() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get("http://localhost:8000/get-all-pcn");
+        const response = await axios.get("https://backendphase2.azurewebsites.net/get-all-pcn");
         setPcns(response.data.recordset);
       } catch (error) {
         setError(error);
@@ -85,7 +85,7 @@ function PCNList() {
     console.log("pcns =>", pcns[index]);
     // Reset Pin
     axios
-      .post("http://localhost:8000/reset-pin", { data: pcns[index] })
+      .post("https://backendphase2.azurewebsites.net/reset-pin", { data: pcns[index] })
       .then((res) => {
         const data = res.data.message;
         console.log(data);
