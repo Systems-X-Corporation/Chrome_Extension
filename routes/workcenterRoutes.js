@@ -7,7 +7,7 @@ router.post("/cooldown", async (req, res) => {
   try {
     const bodyRequest = req.body;
 
-    console.log("bodyRequest ==>", bodyRequest);
+    // console.log("bodyRequest ==>", bodyRequest);
 
     if (
       !bodyRequest.workcenter_no ||
@@ -74,7 +74,7 @@ router.post("/cooldown", async (req, res) => {
       (credential) =>
         credential.pcnName.toLowerCase() === bodyRequest.pcnName.toLowerCase()
     );
-    console.log("credential", credential);
+    // console.log("credential", credential);
     let body = `{\r\n  "inputs": {\r\n    "Workcenter_Key":\r\n     "${bodyRequest.Workcenter_Key}"\r\n  }\r\n}`;
     let center_rate;
 
@@ -90,15 +90,44 @@ router.post("/cooldown", async (req, res) => {
     };
     let apiResponseData = await axios.request(config);
 
-    console.log("123 ", typeof apiResponseData);
+    // console.log("123 ", typeof apiResponseData);
     console.log("123456 ", JSON.stringify(apiResponseData.data));
     apiResponseData = JSON.stringify(apiResponseData.data);
     apiResponseData = await JSON.parse(apiResponseData);
-    console.log("apiResponseData.length", apiResponseData.tables.length);
-    console.log("bodyRequest.workcenter_rate", bodyRequest.workcenter_rate);
+    // console.log("apiResponseData.length", apiResponseData.tables.length);
+    // console.log("bodyRequest.workcenter_rate", bodyRequest.workcenter_rate);
+    // console.log(
+    //   "apiResponseData.tables[0].rows.length",
+    //   apiResponseData.tables[0].rows.length
+    // );
+    // console.log(
+    //   "======================================== last production time calculation Time ==========================================="
+    // );
+    let timeIndex =
+      apiResponseData.tables[0].columns.indexOf("Production_Time");
+    console.log("temp1 index", timeIndex);
+    let lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
+    lastProductionTime = lastProductionTime.toLocaleString('en-US', { timeZone: 'UTC' });
     console.log(
-      "apiResponseData.tables[0].rows.length",
-      apiResponseData.tables[0].rows.length
+      "last production lastProductionTime",
+      typeof lastProductionTime,
+      "date=>",
+      lastProductionTime
+    );
+    let currentTime = new Date();
+    // Format the date in the desired format
+    currentTime = currentTime.toISOString();
+    currentTime = currentTime.toLocaleString('en-US', { timeZone: 'UTC' });
+    console.log("current date", typeof currentTime, "date=>", currentTime);
+    var date1 = new Date(currentTime);
+    var date2 = new Date(lastProductionTime);
+
+    // Calculate the difference in milliseconds
+    let difference = date1 - date2;
+    difference = difference / 1000;
+    console.log("diiference is => ", difference);
+    console.log(
+      "======================================== Time ==========================================="
     );
 
     if (
@@ -156,12 +185,14 @@ router.post("/cooldown", async (req, res) => {
       bodyRequest.percent_of_rate === 0
         ? perSec
         : (perSec * bodyRequest.percent_of_rate) / 100;
-    console.log("workcenter =>", perHour);
-    console.log("perMin =>", perMin);
-    console.log("perSec =>", perSec);
+    // console.log("workcenter =>", perHour);
+    // console.log("perMin =>", perMin);
+    // console.log("perSec =>", perSec);
     console.log("cooldown_no =>", cooldown_no);
+    let adjustedCoolDown = cooldown_no - difference;
+    console.log("adjusted cooldown_no =>", adjustedCoolDown);
 
-    res.status(200).json({ cooldown_no: cooldown_no });
+    res.status(200).json({ cooldown_no: adjustedCoolDown });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
