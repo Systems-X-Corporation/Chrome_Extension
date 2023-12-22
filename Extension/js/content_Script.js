@@ -77,7 +77,7 @@ if (field_name[1].textContent == "Production") {
   });
 }
 const callAPI = localStorage.getItem("callAPI");
-console.log("callAPI",callAPI);
+console.log("callAPI", callAPI);
 if (callAPI === "true" && callAPI !== undefined) {
   let tableandrowelement = document.createElement("div");
   tableandrowelement.setAttribute("id", "record_button");
@@ -137,15 +137,21 @@ if (callAPI === "true" && callAPI !== undefined) {
           let ApiResponse = await response.json();
           console.log("ApiResponse", ApiResponse);
           let cooldown_no = ApiResponse.cooldown_no;
-          console.log("cooldown_no", cooldown_no);
-          console.log("cooldown_no", Math.ceil(cooldown_no));
-          console.log("API Response Status:", response.status);
-          console.log("API Response:", response);
+          // console.log("cooldown_no", cooldown_no);
+          // console.log("cooldown_no", Math.ceil(cooldown_no));
+          // console.log("API Response Status:", response.status);
+          // console.log("API Response:", response);
           if (response.status == 200) {
             let popuptimer = document.getElementById("popup_timer");
             popuptimer.style.display = "flex";
-            const time = Math.ceil(cooldown_no);
-            setTimer(time);
+            if (cooldown_no > 0) {
+              const time = Math.ceil(cooldown_no);
+              setTimer(time);
+            } else {
+              setTimeout(() => {
+                popuptimer.style.display = "none";
+              }, 1000);
+            }
           } else {
             console.log("Error:", response.status);
             // popuptimer.style.display = "none";
@@ -195,7 +201,7 @@ popuptimer.innerHTML = `
   font-size: 30px;
   font-weight: 600;
   padding: 50px;
-">You are not allowed to record production<br>Time to record production again:<br><div><span id = "countdown">10</span>(Countdown)</div></div>
+">You are not allowed to record production<br>Time to record production again:<br><div><span id = "countdown">0</span>(Countdown)</div></div>
 `;
 let popup_div = document.querySelector("#autoID1_persistentBanner");
 popup_div.prepend(popuptimer);
