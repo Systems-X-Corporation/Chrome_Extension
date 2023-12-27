@@ -42,6 +42,147 @@ console.log("Content script loaded");
 //   }
 // });
 
+// Test
+
+function closeButton() {
+  document
+    .getElementById("system-x-close")
+    .addEventListener("click", function () {
+      // Your code to handle the click event goes here
+      console.log("System close button clicked!");
+      console.log("step-1");
+      popuptimer.style.display = "none";
+      const result = document.evaluate(
+        "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+
+      const selectedElement = result.singleNodeValue;
+
+      if (selectedElement) {
+        selectedElement.style.display = "inline-block";
+      } else {
+        console.error("Element not found with the provided XPath.");
+      }
+
+      const result2 = document.evaluate(
+        "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+
+      const selectedElement2 = result2.singleNodeValue;
+      var elementData = document.getElementById("record_button");
+
+      if (selectedElement2) {
+        selectedElement2.style.display = "none";
+        elementData.style.display = "flex";
+      } else {
+        console.error("Element not found with the provided XPath.");
+      }
+    });
+}
+
+function waitForElement(xpath, callback) {
+  const observer = new MutationObserver(() => {
+    const result = document.evaluate(
+      xpath,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null
+    );
+
+    const selectedElement = result.singleNodeValue;
+
+    if (selectedElement) {
+      observer.disconnect(); // Stop observing once the element is found
+      callback(selectedElement);
+    }
+  });
+
+  observer.observe(document, { childList: true, subtree: true });
+}
+
+waitForElement(
+  "/html/body/div[3]/div[2]/div[4]/div[1]/ul",
+  (selectedElement) => {
+    console.log("Element found:", selectedElement);
+    if (selectedElement) {
+      // Create a new li element with specific content
+      const newLi = document.createElement("li");
+      newLi.style.marginLeft = "5px";
+      newLi.style.display = "none";
+      newLi.className = "disabled";
+      newLi.setAttribute(
+        "data-bind",
+        "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
+      );
+      newLi.innerHTML = `
+          <a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
+            <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
+            <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
+          </a>
+        `;
+
+      // Check if there is at least one child
+      if (selectedElement.children.length >= 1) {
+        // Insert the new li element as the second child
+        selectedElement.insertBefore(newLi, selectedElement.children[1]);
+      } else {
+        // If there are no children, simply append the new li element
+        selectedElement.appendChild(newLi);
+      }
+    } else {
+      console.error("Element not found with the provided XPath.");
+    }
+  }
+);
+// const xpath = "/html/body/div[3]/div[2]/div[4]/div[1]/ul";
+// const result = document.evaluate(
+//   xpath,
+//   document,
+//   null,
+//   XPathResult.FIRST_ORDERED_NODE_TYPE,
+//   null
+// );
+
+// // console.log("result test =>", result);
+// const selectedElement = result.singleNodeValue;
+
+// if (selectedElement) {
+//   // Create a new li element with specific content
+//   const newLi = document.createElement("li");
+//   newLi.style.marginLeft = "5px";
+//   newLi.className = "system-x-record-button disabled";
+//   newLi.setAttribute(
+//     "data-bind",
+//     "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
+//   );
+//   newLi.innerHTML = `
+//       <a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
+//         <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
+//         <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
+//       </a>
+//     `;
+
+//   // Check if there is at least one child
+//   if (selectedElement.children.length >= 1) {
+//     // Insert the new li element as the second child
+//     selectedElement.insertBefore(newLi, selectedElement.children[1]);
+//   } else {
+//     // If there are no children, simply append the new li element
+//     selectedElement.appendChild(newLi);
+//   }
+// } else {
+//   console.error("Element not found with the provided XPath.");
+// }
+
 // main
 const input_Field = document.getElementsByClassName("plex-numeric-text");
 let inputValue;
@@ -57,9 +198,12 @@ if (field_name[2].textContent == "Quantity per Container") {
     inputValue = input_Field[1].value;
   }
   input_Field[1].addEventListener("change", function () {
+    console.log("Quantity per Container change =>");
     // This function will be called when the input value changes
     if (input_Field[1].value.length !== 0) {
       inputValue = input_Field[1].value;
+    } else {
+      inputValue = 0;
     }
     console.log("Extracted Value:", inputValue);
   });
@@ -69,9 +213,12 @@ if (field_name[1].textContent == "Production") {
     inputValue = input_Field[0].value;
   }
   input_Field[0].addEventListener("change", function () {
+    console.log("Production change =>");
     // This function will be called when the input value changes
     if (input_Field[0].value.length !== 0) {
       inputValue = input_Field[0].value;
+    } else {
+      inputValue = 0;
     }
     console.log("Extracted Value:", inputValue);
   });
@@ -86,10 +233,10 @@ if (callAPI === "true" && callAPI !== undefined) {
   tableandrowelement.style.width = "211px";
   // tableandrowelement.innerHTML = `<a style="padding: 6px 10px;" class=" ${localStorage.getItem("recordProductionButtonDisabled")? "button_new": "record-production-actionbar-button"}"><i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i><span class="record-production-action-title" data-bind="text: $data.text">${localStorage.getItem("recordProductionButtonDisabled")? "Plex Disabled": "Record Production" }</span></a>`;
   tableandrowelement.innerHTML = `
-  <a style="padding: 6px 10px;" class=" button_new record-production-actionbar-button">
+  <button style="padding: 6px 10px;" class=" button_new record-production-actionbar-button" disable>
 <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
 <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
-</a>`;
+</button>`;
   let pixcelSearchResult = document.querySelectorAll(".plex-actions");
 
   pixcelSearchResult.forEach((element) => {
@@ -102,15 +249,35 @@ if (callAPI === "true" && callAPI !== undefined) {
     const data = await chrome.storage.local.get(["pcnName"]);
     console.log("pcnName", data.pcnName);
     const pcnName = data.pcnName;
+
+    if (field_name[2].textContent == "Quantity per Container") {
+      console.log("test-1 =>", input_Field[1].value);
+      if (input_Field[1].value.length !== 0) {
+        inputValue = input_Field[1].value;
+      } else {
+        inputValue = 0;
+      }
+    }
+    if (field_name[1].textContent == "Production") {
+      console.log("test-2 =>", input_Field[0].value);
+      if (input_Field[0].value.length !== 0) {
+        inputValue = input_Field[0].value;
+      } else {
+        inputValue = 0;
+      }
+    }
+
     // Create the data to send in the POST request
     var dataToSend = {
       workcenter_no: widgetHeaderData,
-      pcs: inputValue,
+      // pcs: inputValue,
       percent_of_rate: percentRate,
       workcenter_rate: variable2,
       Workcenter_Key: myParam,
       pcnName: pcnName,
     };
+
+    inputValue !== 0 ? (dataToSend.pcs = inputValue) : "";
 
     console.log("Data to send in the POST request:", dataToSend);
 
@@ -137,12 +304,42 @@ if (callAPI === "true" && callAPI !== undefined) {
           let ApiResponse = await response.json();
           console.log("ApiResponse", ApiResponse);
           let cooldown_no = ApiResponse.cooldown_no;
+          let total_cooldown_no = ApiResponse.total_cooldown_no;
+          document.getElementById("total_cooldown_no").innerText =
+            total_cooldown_no + "s";
+          document.getElementById("adjusted_cooldown").innerText = Math.ceil(cooldown_no) + "s";
           // console.log("cooldown_no", cooldown_no);
           // console.log("cooldown_no", Math.ceil(cooldown_no));
           // console.log("API Response Status:", response.status);
           // console.log("API Response:", response);
           if (response.status == 200) {
             let popuptimer = document.getElementById("popup_timer");
+
+            waitForElement(
+              "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
+              (selectedElement) => {
+                if (selectedElement) {
+                  selectedElement.style.display = "none";
+                } else {
+                  console.error("Element not found with the provided XPath.");
+                }
+              }
+            );
+
+            waitForElement(
+              "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
+              (selectedElement) => {
+                var elementData = document.getElementById("record_button");
+
+                if (selectedElement) {
+                  selectedElement.style.display = "inline-block";
+                  elementData.style.display = "none";
+                } else {
+                  console.error("Element not found with the provided XPath.");
+                }
+              }
+            );
+
             popuptimer.style.display = "flex";
             if (cooldown_no > 0) {
               const time = Math.ceil(cooldown_no);
@@ -150,6 +347,34 @@ if (callAPI === "true" && callAPI !== undefined) {
             } else {
               setTimeout(() => {
                 popuptimer.style.display = "none";
+                waitForElement(
+                  "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
+                  (selectedElement) => {
+                    if (selectedElement) {
+                      selectedElement.style.display = "inline-block";
+                    } else {
+                      console.error(
+                        "Element not found with the provided XPath."
+                      );
+                    }
+                  }
+                );
+
+                waitForElement(
+                  "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
+                  (selectedElement) => {
+                    var elementData = document.getElementById("record_button");
+
+                    if (selectedElement) {
+                      selectedElement.style.display = "none";
+                      elementData.style.display = "flex";
+                    } else {
+                      console.error(
+                        "Element not found with the provided XPath."
+                      );
+                    }
+                  }
+                );
               }, 1000);
             }
           } else {
@@ -181,11 +406,28 @@ if (callAPI === "true" && callAPI !== undefined) {
     // }
   });
 }
+
+function getGreeting() {
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+
+  if (currentHour >= 5 && currentHour < 12) {
+    return "Good morning user!";
+  } else if (currentHour >= 12 && currentHour < 18) {
+    return "Good afternoon user!";
+  } else {
+    return "Good evening user!";
+  }
+}
+
+const greeting = getGreeting();
+
 let popuptimer = document.createElement("div");
 popuptimer.setAttribute("id", "popup_timer");
 popuptimer.style.position = "absolute";
-popuptimer.style.width = "100vw";
-popuptimer.style.height = "100vh";
+popuptimer.style.marginTop = "45px";
+popuptimer.style.width = "40vw";
+popuptimer.style.height = "30vh";
 popuptimer.style.backgroundColor = "rgb(255, 0, 0, 0.5)";
 popuptimer.style.color = "black";
 popuptimer.style.textAlign = "center";
@@ -198,26 +440,157 @@ popuptimer.innerHTML = `
   <div style="
   opacity: 1;
   text-align: center;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 600;
-  padding: 50px;
-">You are not allowed to record production<br>Time to record production again:<br><div><span id = "countdown">0</span>(Countdown)</div></div>
+  width: 100%;
+  padding: 30px;
+">
+<div>You are not allowed to record production at this time</div>
+<div>Total Cooldown: <span id="total_cooldown_no"></span></div>
+<div>Adjusted Cooldown: <span id="adjusted_cooldown"></span></div>
+<div>Time to record production again: <span id = "countdown">0</span>(Countdown)</div>
+<button id="system-x-close" style="margin-top: 20px; border-radius: 10px; background-color: #00b050; color: white; padding: 5px 10px; border: none; cursor: pointer;">
+        Close
+      </button>
+</div>
 `;
 let popup_div = document.querySelector("#autoID1_persistentBanner");
 popup_div.prepend(popuptimer);
+closeButton();
+
+let isDragging = false;
+let offsetX, offsetY;
+
+popuptimer.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  offsetX = e.clientX - popuptimer.getBoundingClientRect().left;
+  offsetY = e.clientY - popuptimer.getBoundingClientRect().top;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (isDragging) {
+    const x = e.clientX - offsetX;
+    const y = e.clientY - offsetY;
+
+    // Check boundaries
+    const maxX = window.innerWidth - popuptimer.offsetWidth;
+    const maxY = window.innerHeight - popuptimer.offsetHeight - 45;
+
+    // Ensure the element stays within the screen boundaries
+    popuptimer.style.left = `${Math.min(Math.max(0, x), maxX)}px`;
+    popuptimer.style.top = `${Math.min(Math.max(0, y), maxY)}px`;
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+var currentInterval;
 
 function setTimer(time) {
+  // Clear the previous interval if it exists
+  if (currentInterval) {
+    clearInterval(currentInterval);
+  }
+
   var x = setInterval(function () {
     document.getElementById("countdown").innerHTML = time + "s ";
     time--;
     if (time < 0) {
       if (popuptimer) {
         popuptimer.style.display = "none";
+        console.log("step-1");
+
+        const result = document.evaluate(
+          "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null
+        );
+
+        const selectedElement = result.singleNodeValue;
+
+        if (selectedElement) {
+          selectedElement.style.display = "inline-block";
+        } else {
+          console.error("Element not found with the provided XPath.");
+        }
+
+        const result2 = document.evaluate(
+          "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
+          document,
+          null,
+          XPathResult.FIRST_ORDERED_NODE_TYPE,
+          null
+        );
+
+        const selectedElement2 = result2.singleNodeValue;
+        var elementData = document.getElementById("record_button");
+
+        if (selectedElement2) {
+          selectedElement2.style.display = "none";
+          elementData.style.display = "flex";
+        } else {
+          console.error("Element not found with the provided XPath.");
+        }
       }
       clearInterval(x);
     }
   }, 1000);
+
+  // Set the current interval to the new interval
+  currentInterval = x;
 }
+
+// function setTimer(time) {
+//   var x = setInterval(function () {
+//     document.getElementById("countdown").innerHTML = time + "s ";
+//     time--;
+//     if (time < 0) {
+//       if (popuptimer) {
+//         popuptimer.style.display = "none";
+//         console.log("step-1");
+
+//         const result = document.evaluate(
+//           "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
+//           document,
+//           null,
+//           XPathResult.FIRST_ORDERED_NODE_TYPE,
+//           null
+//         );
+
+//         const selectedElement = result.singleNodeValue;
+
+//         if (selectedElement) {
+//           selectedElement.style.display = "inline-block";
+//         } else {
+//           console.error("Element not found with the provided XPath.");
+//         }
+
+//         const result2 = document.evaluate(
+//           "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
+//           document,
+//           null,
+//           XPathResult.FIRST_ORDERED_NODE_TYPE,
+//           null
+//         );
+
+//         const selectedElement2 = result2.singleNodeValue;
+//         var elementData = document.getElementById("record_button");
+
+//         if (selectedElement2) {
+//           selectedElement2.style.display = "none";
+//           elementData.style.display = "flex";
+//         } else {
+//           console.error("Element not found with the provided XPath.");
+//         }
+//       }
+//       clearInterval(x);
+//     }
+//   }, 1000);
+// }
 
 let popupwindow = document.createElement("div");
 popupwindow.setAttribute("id", "popup_alert");

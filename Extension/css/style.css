@@ -163,3 +163,8 @@
   background-image: linear-gradient(#ff0000 0%, #b30000 100%) !important;
   position:unset;
 }
+
+
+.system-x-record-button {
+  display: inline-block !important;
+}
