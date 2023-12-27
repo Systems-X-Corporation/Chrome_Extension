@@ -38,7 +38,8 @@ router.post("/cooldown", async (req, res) => {
       },
       {
         pcnName: "Henniges Gomez Palacio 2",
-        authToken: "SGVubmlnZXNHb21QYWxhMldTMkBwbGV4LmNvbTozMjU3YzJkLTYzNGEtNA==",
+        authToken:
+          "SGVubmlnZXNHb21QYWxhMldTMkBwbGV4LmNvbTozMjU3YzJkLTYzNGEtNA==",
       },
       {
         pcnName: "Henniges Guadalajara",
@@ -67,7 +68,7 @@ router.post("/cooldown", async (req, res) => {
       {
         pcnName: "Henniges Reidsville",
         authToken: "SGVubmlnZXNSZWlkc1ZXUzJAcGxleC5jb206NDFmZGE4Yy1iYzM3LTQ=",
-      }
+      },
     ];
 
     const credential = pcnCredentials.find(
@@ -107,7 +108,9 @@ router.post("/cooldown", async (req, res) => {
       apiResponseData.tables[0].columns.indexOf("Production_Time");
     console.log("temp1 index", timeIndex);
     let lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
-    lastProductionTime = lastProductionTime.toLocaleString('en-US', { timeZone: 'UTC' });
+    lastProductionTime = lastProductionTime.toLocaleString("en-US", {
+      timeZone: "UTC",
+    });
     console.log(
       "last production lastProductionTime",
       typeof lastProductionTime,
@@ -117,7 +120,7 @@ router.post("/cooldown", async (req, res) => {
     let currentTime = new Date();
     // Format the date in the desired format
     currentTime = currentTime.toISOString();
-    currentTime = currentTime.toLocaleString('en-US', { timeZone: 'UTC' });
+    currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
     console.log("current date", typeof currentTime, "date=>", currentTime);
     var date1 = new Date(currentTime);
     var date2 = new Date(lastProductionTime);
@@ -192,7 +195,10 @@ router.post("/cooldown", async (req, res) => {
     let adjustedCoolDown = cooldown_no - difference;
     console.log("adjusted cooldown_no =>", adjustedCoolDown);
 
-    res.status(200).json({ cooldown_no: adjustedCoolDown });
+    // res.status(200).json({ cooldown_no: adjustedCoolDown });
+    res
+      .status(200)
+      .json({ total_cooldown_no: cooldown_no, cooldown_no: adjustedCoolDown });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
