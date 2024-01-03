@@ -43,6 +43,34 @@ console.log("Content script loaded");
 // });
 
 // Test
+let wrapperElement;
+let ulElement;
+let pixcelSearchResult = document.querySelectorAll(".plex-actions");
+let wrapperSearchResult = document.querySelector(
+  '.plex-actions-wrapper[data-bind*="autoID"]'
+);
+console.log("wrapperSearchResult =>", wrapperSearchResult);
+
+// var secondElement = document.querySelector('.plex-actions-wrapper[data-bind*="autoID"]');
+// console.log("Second element:", secondElement);
+
+// pixcelSearchResult = [pixcelSearchResult[0]]
+
+pixcelSearchResult.forEach((element) => {
+  if (element.id.includes("autoID")) {
+    console.log("pixcelSearchResult =>", element);
+    ulElement = element;
+  }
+});
+
+// wrapperSearchResult.forEach((element) => {
+//   if (element.id.includes("autoID")) {
+//     console.log("pixcelSearchResult =>", element);
+//     ulElement = element;
+//   }
+// });
+var firstLi;
+var secondLi;
 
 function closeButton() {
   document
@@ -52,35 +80,19 @@ function closeButton() {
       console.log("System close button clicked!");
       console.log("step-1");
       popuptimer.style.display = "none";
-      const result = document.evaluate(
-        "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
 
-      const selectedElement = result.singleNodeValue;
+      var elementData = document.getElementById("record_button");
 
-      if (selectedElement) {
-        selectedElement.style.display = "inline-block";
+      console.log("test element =>", elementData);
+      if (firstLi) {
+        console.log("test element =>", firstLi);
+        firstLi.style.display = "none";
       } else {
         console.error("Element not found with the provided XPath.");
       }
 
-      const result2 = document.evaluate(
-        "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
-
-      const selectedElement2 = result2.singleNodeValue;
-      var elementData = document.getElementById("record_button");
-
-      if (selectedElement2) {
-        selectedElement2.style.display = "none";
+      if (secondLi) {
+        secondLi.style.display = "inline-block";
         elementData.style.display = "flex";
       } else {
         console.error("Element not found with the provided XPath.");
@@ -88,61 +100,107 @@ function closeButton() {
     });
 }
 
-function waitForElement(xpath, callback) {
-  const observer = new MutationObserver(() => {
-    const result = document.evaluate(
-      xpath,
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    );
+function observeElementAppended(element, callback) {
+  console.log("observeElementAppended =>", element);
+  const targetNode = element;
 
-    const selectedElement = result.singleNodeValue;
-
-    if (selectedElement) {
-      observer.disconnect(); // Stop observing once the element is found
-      callback(selectedElement);
+  const mutationCallback = (mutationsList, observer) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList") {
+        // Execute the provided callback when the element is added
+        callback(targetNode);
+        // Don't forget to disconnect the observer if needed
+        observer.disconnect();
+      }
     }
-  });
+  };
 
-  observer.observe(document, { childList: true, subtree: true });
+  const observer = new MutationObserver(mutationCallback);
+  const config = { childList: true };
+
+  if (targetNode) {
+    observer.observe(targetNode, config);
+  }
+
+  // Clean up the observer when you're done
+  return () => {
+    if (targetNode) {
+      observer.disconnect();
+    }
+  };
 }
 
-waitForElement(
-  "/html/body/div[3]/div[2]/div[4]/div[1]/ul",
-  (selectedElement) => {
-    console.log("Element found:", selectedElement);
-    if (selectedElement) {
-      // Create a new li element with specific content
-      const newLi = document.createElement("li");
-      newLi.style.marginLeft = "5px";
-      newLi.style.display = "none";
-      newLi.className = "disabled";
-      newLi.setAttribute(
-        "data-bind",
-        "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
-      );
-      newLi.innerHTML = `
-          <a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
-            <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
-            <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
-          </a>
-        `;
+// observeElementAppended(ulElement, (selectedElement) => {
+console.log("Element found:", ulElement);
+if (ulElement) {
+  // Create a new li element with specific content
+  const newLi = document.createElement("li");
+  newLi.style.marginLeft = "5px";
+  // newLi.style.display = "none";
+  newLi.className = "disabled";
+  newLi.setAttribute(
+    "data-bind",
+    "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
+  );
+  newLi.innerHTML = `<a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
+              <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
+              <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
+            </a>`;
 
-      // Check if there is at least one child
-      if (selectedElement.children.length >= 1) {
-        // Insert the new li element as the second child
-        selectedElement.insertBefore(newLi, selectedElement.children[1]);
-      } else {
-        // If there are no children, simply append the new li element
-        selectedElement.appendChild(newLi);
-      }
-    } else {
-      console.error("Element not found with the provided XPath.");
-    }
+  console.log("children =>", ulElement);
+  // Check if there is at least one child
+  if (ulElement.children.length >= 1) {
+    // Insert the new li element as the second child
+    ulElement.insertBefore(newLi, ulElement.children[1]);
+    firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+    ulElement.querySelector(".plex-actions li:nth-child(1)").style.display =
+      "none";
+    secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+  } else {
+    // If there are no children, simply append the new li element
+    ulElement.appendChild(newLi);
+    firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+    secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
   }
-);
+} else {
+  console.error("Element not found with the provided XPath.");
+}
+// });
+
+// waitForElement(
+//   "/html/body/div[3]/div[2]/div[4]/div[1]/ul",
+//   (selectedElement) => {
+//     console.log("Element found:", selectedElement);
+//     if (selectedElement) {
+//       // Create a new li element with specific content
+//       const newLi = document.createElement("li");
+//       newLi.style.marginLeft = "5px";
+//       newLi.style.display = "none";
+//       newLi.className = "disabled";
+//       newLi.setAttribute(
+//         "data-bind",
+//         "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
+//       );
+//       newLi.innerHTML = `
+//           <a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
+//             <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
+//             <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
+//           </a>
+//         `;
+
+//       // Check if there is at least one child
+//       if (selectedElement.children.length >= 1) {
+//         // Insert the new li element as the second child
+//         selectedElement.insertBefore(newLi, selectedElement.children[1]);
+//       } else {
+//         // If there are no children, simply append the new li element
+//         selectedElement.appendChild(newLi);
+//       }
+//     } else {
+//       console.error("Element not found with the provided XPath.");
+//     }
+//   }
+// );
 // const xpath = "/html/body/div[3]/div[2]/div[4]/div[1]/ul";
 // const result = document.evaluate(
 //   xpath,
@@ -228,21 +286,21 @@ console.log("callAPI", callAPI);
 if (callAPI === "true" && callAPI !== undefined) {
   let tableandrowelement = document.createElement("div");
   tableandrowelement.setAttribute("id", "record_button");
-  tableandrowelement.style.top = "-40px";
+  tableandrowelement.style.top = "-42px";
+  tableandrowelement.style.left = "3px";
   tableandrowelement.style.position = "relative";
   tableandrowelement.style.width = "211px";
   // tableandrowelement.innerHTML = `<a style="padding: 6px 10px;" class=" ${localStorage.getItem("recordProductionButtonDisabled")? "button_new": "record-production-actionbar-button"}"><i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i><span class="record-production-action-title" data-bind="text: $data.text">${localStorage.getItem("recordProductionButtonDisabled")? "Plex Disabled": "Record Production" }</span></a>`;
   tableandrowelement.innerHTML = `
-  <button style="padding: 6px 10px;" class=" button_new record-production-actionbar-button" disable>
+  <button style="padding: 4px 10px; display: flex;
+  color: white;     width: 215px !important;
+  " class=" button_new record-production-actionbar-button" disable>
 <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
-<span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
+<span class="" data-bind="text: $data.text">Record Production</span>
 </button>`;
-  let pixcelSearchResult = document.querySelectorAll(".plex-actions");
 
-  pixcelSearchResult.forEach((element) => {
-    element.append(tableandrowelement);
-  });
-
+  ulElement.insertAdjacentElement("afterend", tableandrowelement);
+  // ulElement.append(tableandrowelement);
   tableandrowelement.addEventListener("click", async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get("WorkcenterKey");
@@ -291,7 +349,8 @@ if (callAPI === "true" && callAPI !== undefined) {
       !localStorage.getItem("fallbacksec")
     ) {
       console.log("hello");
-      recordProductionButton.click();
+      // recordProductionButton.click();
+      console.log("firstLi.style.display =>", firstLi);
       fetch("https://backendphase2.azurewebsites.net/cooldown", {
         method: "POST",
         headers: {
@@ -306,75 +365,64 @@ if (callAPI === "true" && callAPI !== undefined) {
           let cooldown_no = ApiResponse.cooldown_no;
           let total_cooldown_no = ApiResponse.total_cooldown_no;
           document.getElementById("total_cooldown_no").innerText =
-            total_cooldown_no + "s";
-          document.getElementById("adjusted_cooldown").innerText = Math.ceil(cooldown_no) + "s";
+            Math.ceil(total_cooldown_no) + "s";
+          document.getElementById("adjusted_cooldown").innerText =
+            Math.ceil(cooldown_no) + "s";
           // console.log("cooldown_no", cooldown_no);
           // console.log("cooldown_no", Math.ceil(cooldown_no));
           // console.log("API Response Status:", response.status);
           // console.log("API Response:", response);
+          var elementData = document.getElementById("record_button");
+
+          // var firstLi = ulElement.querySelector(
+          //   ".plex-actions li:nth-child(1)"
+          // );
+          // var secondLi = ulElement.querySelector(
+          //   ".plex-actions li:nth-child(2)"
+          // );
+
           if (response.status == 200) {
             let popuptimer = document.getElementById("popup_timer");
 
-            waitForElement(
-              "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
-              (selectedElement) => {
-                if (selectedElement) {
-                  selectedElement.style.display = "none";
-                } else {
-                  console.error("Element not found with the provided XPath.");
-                }
-              }
-            );
+            if (firstLi) {
+              console.log("test element =>", firstLi);
+              firstLi.style.display = "none";
+            } else {
+              console.error("Element not found with the provided XPath.");
+            }
 
-            waitForElement(
-              "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
-              (selectedElement) => {
-                var elementData = document.getElementById("record_button");
+            if (secondLi) {
+              secondLi.style.display = "inline-block";
+              elementData.style.display = "none";
+            } else {
+              console.error("Element not found with the provided XPath.");
+            }
 
-                if (selectedElement) {
-                  selectedElement.style.display = "inline-block";
-                  elementData.style.display = "none";
-                } else {
-                  console.error("Element not found with the provided XPath.");
-                }
-              }
-            );
-
-            popuptimer.style.display = "flex";
+            console.log("response test =>", ApiResponse);
             if (cooldown_no > 0) {
+              popuptimer.style.display = "flex";
               const time = Math.ceil(cooldown_no);
               setTimer(time);
             } else {
+              console.log("firstLi.style.display =>");
+              firstLi.style.display = "inline-block";
+              firstLi.click();
               setTimeout(() => {
-                popuptimer.style.display = "none";
-                waitForElement(
-                  "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
-                  (selectedElement) => {
-                    if (selectedElement) {
-                      selectedElement.style.display = "inline-block";
-                    } else {
-                      console.error(
-                        "Element not found with the provided XPath."
-                      );
-                    }
-                  }
-                );
+                // popuptimer.style.display = "none";
 
-                waitForElement(
-                  "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
-                  (selectedElement) => {
-                    var elementData = document.getElementById("record_button");
+                if (firstLi) {
+                  console.log("test element =>", firstLi);
+                  firstLi.style.display = "none";
+                } else {
+                  console.error("Element not found with the provided XPath.");
+                }
 
-                    if (selectedElement) {
-                      selectedElement.style.display = "none";
-                      elementData.style.display = "flex";
-                    } else {
-                      console.error(
-                        "Element not found with the provided XPath."
-                      );
-                    }
-                  }
-                );
+                if (secondLi) {
+                  secondLi.style.display = "inline-block";
+                  elementData.style.display = "flex";
+                } else {
+                  console.error("Element not found with the provided XPath.");
+                }
               }, 1000);
             }
           } else {
@@ -502,35 +550,19 @@ function setTimer(time) {
         popuptimer.style.display = "none";
         console.log("step-1");
 
-        const result = document.evaluate(
-          "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[1]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null
-        );
+        // var firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+        // var secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+        var elementData = document.getElementById("record_button");
 
-        const selectedElement = result.singleNodeValue;
-
-        if (selectedElement) {
-          selectedElement.style.display = "inline-block";
+        console.log("test element =>", elementData);
+        if (firstLi) {
+          firstLi.style.display = "inline-block";
         } else {
           console.error("Element not found with the provided XPath.");
         }
 
-        const result2 = document.evaluate(
-          "/html/body/div[3]/div[2]/div[4]/div[1]/ul/li[2]",
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null
-        );
-
-        const selectedElement2 = result2.singleNodeValue;
-        var elementData = document.getElementById("record_button");
-
-        if (selectedElement2) {
-          selectedElement2.style.display = "none";
+        if (secondLi) {
+          secondLi.style.display = "none";
           elementData.style.display = "flex";
         } else {
           console.error("Element not found with the provided XPath.");
