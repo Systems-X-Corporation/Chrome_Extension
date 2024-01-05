@@ -535,7 +535,7 @@ style="
   <div>Adjusted Cooldown: <span id="adjusted_cooldown">486s</span></div>
   <div>
     Time to record production again:
-    <span id="countdown">373s </span>(Countdown)
+    <span id="countdown">373s </span>
   </div>
 </div>
 <div
