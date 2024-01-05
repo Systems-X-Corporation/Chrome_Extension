@@ -282,7 +282,7 @@ if (field_name[1].textContent == "Production") {
   });
 }
 const callAPI = localStorage.getItem("callAPI");
-console.log("callAPI", callAPI);
+console.log("callAPI =>", callAPI);
 if (callAPI === "true" && callAPI !== undefined) {
   let tableandrowelement = document.createElement("div");
   tableandrowelement.setAttribute("id", "record_button");
@@ -336,6 +336,9 @@ if (callAPI === "true" && callAPI !== undefined) {
     };
 
     inputValue !== 0 ? (dataToSend.pcs = inputValue) : "";
+    localStorage.getItem("fallbacksec") !== ""
+      ? (dataToSend.fall_back_sec = localStorage.getItem("fallbacksec"))
+      : "";
 
     console.log("Data to send in the POST request:", dataToSend);
 
@@ -345,8 +348,8 @@ if (callAPI === "true" && callAPI !== undefined) {
     // if (localStorage.getItem("recordProductionButtonDisabled") === false) {
     if (
       callAPI !== undefined &&
-      callAPI === "true" &&
-      !localStorage.getItem("fallbacksec")
+      callAPI === "true"
+      // && !localStorage.getItem("fallbacksec")
     ) {
       console.log("hello");
       // recordProductionButton.click();
@@ -453,6 +456,9 @@ if (callAPI === "true" && callAPI !== undefined) {
 
     // }
   });
+} else {
+  firstLi.style.display = "inline-block";
+  secondLi.style.display = "none";
 }
 
 function getGreeting() {
@@ -473,38 +479,179 @@ const greeting = getGreeting();
 let popuptimer = document.createElement("div");
 popuptimer.setAttribute("id", "popup_timer");
 popuptimer.style.position = "absolute";
-popuptimer.style.marginTop = "45px";
-popuptimer.style.width = "40vw";
-popuptimer.style.height = "30vh";
-popuptimer.style.backgroundColor = "rgb(255, 0, 0, 0.5)";
-popuptimer.style.color = "black";
+popuptimer.style.borderRadius = "10px";
+// popuptimer.style.marginTop = "45px";
+popuptimer.style.width = "30vw";
+popuptimer.style.height = "20vh";
+popuptimer.style.backgroundColor = "whitesmoke !important";
+popuptimer.style.color = "white";
 popuptimer.style.textAlign = "center";
 popuptimer.style.justifyItems = "center";
 popuptimer.style.alignItems = "center";
 popuptimer.style.display = "none";
 popuptimer.style.zIndex = "1";
 popuptimer.style.justifyContent = "center";
+// popuptimer.style.boxShadow = "rgba(0, 0, 0, 0.35) 0px 5px 15px"
+popuptimer.style.top = "50%";
+popuptimer.style.left = "50%";
+// popuptimer.style.right = "50%";
+// popuptimer.style.transition = "0.1s ease-in-out"
+
 popuptimer.innerHTML = `
-  <div style="
-  opacity: 1;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 600;
-  width: 100%;
-  padding: 30px;
-">
-<div>You are not allowed to record production at this time</div>
-<div>Total Cooldown: <span id="total_cooldown_no"></span></div>
-<div>Adjusted Cooldown: <span id="adjusted_cooldown"></span></div>
-<div>Time to record production again: <span id = "countdown">0</span>(Countdown)</div>
-<button id="system-x-close" style="margin-top: 20px; border-radius: 10px; background-color: #00b050; color: white; padding: 5px 10px; border: none; cursor: pointer;">
-        Close
-      </button>
+<div style="width: 100%;
+margin-top: 45px;
+     border-radius: 5px;
+background-color: whitesmoke !important;     box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+border-radius: 5px;
+background-color: whitesmoke !important;">
+<div
+style="
+  transition: 0.5s ease-in-out;
+
+"
+>
+<div
+  style="
+    opacity: 1;
+    text-align: center;
+    border-radius: 5px;
+    background-image: -webkit-linear-gradient(
+      117deg,
+      #f15757 50%,
+      #e74d4f 50%
+    );
+    font-size: 20px;
+    font-weight: 600;
+    width: 100%;
+    padding: 30px 0px;
+  "
+>
+  <img src="${chrome.runtime.getURL(
+    "images/warning.png"
+  )}" width="90px" alt="" />
+  <h1 style="margin: 2px">WARNING!</h1>
+  <div>You are not allowed to record production at this time</div>
+  <div>Total Cooldown: <span id="total_cooldown_no">500s</span></div>
+  <div>Adjusted Cooldown: <span id="adjusted_cooldown">486s</span></div>
+  <div>
+    Time to record production again:
+    <span id="countdown">373s </span>(Countdown)
+  </div>
 </div>
+<div
+  style="
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px 0px;
+  "
+>
+  <button
+    id="system-x-min"
+    style="
+      border-radius: 10px;
+      background-color: #e74d4f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+    "
+  >
+    Continue Waiting
+  </button>
+  <button
+    id="system-x-close"
+    style="
+      border-radius: 10px;
+      background-color: gainsboro;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+    "
+  >
+    Update Production
+  </button>
+</div>
+</div>
+<div
+style="
+display: none;
+  transition: 0.5s ease-in-out;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: whitesmoke !important;
+"
+>
+<div
+  style="
+    opacity: 1;
+    text-align: center;
+    border-radius: 5px;
+    background-image: -webkit-linear-gradient(
+      117deg,
+      #f15757 50%,
+      #e74d4f 50%
+    );
+    font-size: 20px;
+    font-weight: 600;
+    width: 100%;
+    padding: 30px 0px;
+  "
+>
+  <div>
+    <span id="countdown2">373s </span>
+  </div>
+</div>
+<div
+  style="
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px 0px;
+  "
+>
+  <button
+    id="system-x-max"
+    style="
+      border-radius: 10px;
+      background-color: #e74d4f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+    "
+  >
+    Maximize
+  </button>
+</div>
+</div>
+</div>
+
 `;
 let popup_div = document.querySelector("#autoID1_persistentBanner");
 popup_div.prepend(popuptimer);
 closeButton();
+
+// Add event listener to the "Continue Waiting" button
+document.getElementById("system-x-min").addEventListener("click", function () {
+  const data = document.querySelectorAll("#popup_timer > div > div");
+  console.log("data test =>", data);
+  // // Hide unnecessary elements
+  document.querySelector("#popup_timer").style.width = "8vw";
+  document.querySelector("#popup_timer").style.height = "8vh";
+  data[0].style.display = "none";
+  data[1].style.display = "unset";
+});
+
+document.getElementById("system-x-max").addEventListener("click", function () {
+  const data = document.querySelectorAll("#popup_timer > div > div");
+  console.log("data test =>", data);
+  // // Hide unnecessary elements
+  document.querySelector("#popup_timer").style.width = "30vw";
+  document.querySelector("#popup_timer").style.height = "20vw";
+  data[0].style.display = "unset";
+  data[1].style.display = "none";
+});
 
 let isDragging = false;
 let offsetX, offsetY;
@@ -544,6 +691,7 @@ function setTimer(time) {
 
   var x = setInterval(function () {
     document.getElementById("countdown").innerHTML = time + "s ";
+    document.getElementById("countdown2").innerHTML = time + "s ";
     time--;
     if (time < 0) {
       if (popuptimer) {
@@ -678,6 +826,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log("Received variable2:", localStorage.getItem("variable2"));
     console.log("Received fallbacksec:", localStorage.getItem("fallbacksec"));
     popupwindow.style.display = "none";
+    firstLi.style.display = "inline-block";
+    secondLi.style.display = "none";
     window.location.reload();
     // Do whatever you need to with these values in your content script.
   }
