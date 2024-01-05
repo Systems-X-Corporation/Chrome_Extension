@@ -66,7 +66,6 @@ function PCNList() {
 
   // Function to update the pin by index
   const updatePinByIndex = (e, index) => {
-
     e.preventDefault();
 
     // Make a copy of the original data array
@@ -93,9 +92,9 @@ function PCNList() {
       })
       .catch((error) => {
         console.log("error =>", error.response.data.error);
-        alert(error.response.data.error)
+        alert(error.response.data.error);
       });
-  }
+  };
 
   return (
     <div>
@@ -131,37 +130,54 @@ function PCNList() {
                   <td>{index + 1}</td>
                   <td>{pcn.Plexus_Customer_No}</td>
                   <td>{pcn.Plexus_Customer_Name}</td>
-                  <td style={{ display: "flex" }} id={`input-${index + 1}`}>{pcn.Token}
-                    <button
-                      data-clipboard-action="copy"
-                      data-clipboard-target={`#input-${index + 1}`}
-                      className="copy-text">
-                      <TbCopy style={{ cursor: "pointer" }} />
-                    </button>
+                  <td id={`input-${index + 1}`}>
+                    <div style={{ display: "flex" }}>
+                      {pcn.Token}
+                      <button
+                        data-clipboard-action="copy"
+                        data-clipboard-target={`#input-${index + 1}`}
+                        className="copy-text"
+                      >
+                        <TbCopy style={{ cursor: "pointer" }} />
+                      </button>
+                    </div>
                   </td>
-                  {
-                    switchValue === `reset${index}` ?
-                      <td>
-                        <input required
-                          className="generatepcn-input"
-                          type="number"
-                          value={pcn.Pin}
-                          onChange={(event) => updatePinByIndex(event, index)}
-                        />
-                        <button onClick={(e) => resetPin(e, index)} class="generatepcn-button">
-                          Save
-                        </button>
-                        <button onClick={() => { setSwitchValue(``); window.location.reload(true); }} class="generatepcn-button">
-                          Cancel
-                        </button>
-                      </td>
-                      :
-                      <td>{pcn.Pin}
-                        <button onClick={() => setSwitchValue(`reset${index}`)} class="generatepcn-button">
-                          Reset Pin
-                        </button>
-                      </td>
-                  }
+                  {switchValue === `reset${index}` ? (
+                    <td>
+                      <input
+                        required
+                        className="generatepcn-input"
+                        type="number"
+                        value={pcn.Pin}
+                        onChange={(event) => updatePinByIndex(event, index)}
+                      />
+                      <button
+                        onClick={(e) => resetPin(e, index)}
+                        class="generatepcn-button"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSwitchValue(``);
+                          window.location.reload(true);
+                        }}
+                        class="generatepcn-button"
+                      >
+                        Cancel
+                      </button>
+                    </td>
+                  ) : (
+                    <td>
+                      {pcn.Pin}
+                      <button
+                        onClick={() => setSwitchValue(`reset${index}`)}
+                        class="generatepcn-button"
+                      >
+                        Reset Pin
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -173,7 +189,8 @@ function PCNList() {
               <li
                 key={number}
                 className={currentPage === number ? "active" : ""}
-                onClick={handlePageClick}>
+                onClick={handlePageClick}
+              >
                 {number}
               </li>
             ))}

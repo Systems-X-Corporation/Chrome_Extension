@@ -1,5 +1,5 @@
 .container {
-  background-image: url('../../../../public/images/background-image.jpg'); 
+  background-image: url("../../../../public/images/SX_SAP_PP.png");
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;
@@ -10,7 +10,13 @@
 }
 
 .generatepcn-form {
-  background-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.5);
+  /* background: rgba(255, 255, 255, 0.25); */
+  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -87,7 +93,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
-.labelClass{
+.labelClass {
   display: flex;
   justify-content: center;
   margin: 10px;
