@@ -7,17 +7,7 @@ router.post("/cooldown", async (req, res) => {
   try {
     const bodyRequest = req.body;
 
-    // console.log("bodyRequest ==>", bodyRequest);
-
-    if (
-      !bodyRequest.workcenter_no ||
-      !bodyRequest.percent_of_rate ||
-      !bodyRequest.workcenter_rate ||
-      !bodyRequest.pcnName ||
-      !bodyRequest.Workcenter_Key
-    ) {
-      return res.status(500).json({ error: "Field or fields are missing!" });
-    }
+    console.log("bodyRequest ==>", bodyRequest);
 
     const pcnCredentials = [
       {
@@ -132,73 +122,98 @@ router.post("/cooldown", async (req, res) => {
     console.log(
       "======================================== Time ==========================================="
     );
+    if (!bodyRequest.fall_back_sec) {
+      if (
+        !bodyRequest.workcenter_no ||
+        !bodyRequest.percent_of_rate ||
+        !bodyRequest.workcenter_rate ||
+        !bodyRequest.pcnName ||
+        !bodyRequest.Workcenter_Key
+      ) {
+        return res.status(500).json({ error: "Field or fields are missing!" });
+      }
+      if (
+        bodyRequest.workcenter_rate === "standard" &&
+        apiResponseData.tables[0].rows.length > 0
+      ) {
+        console.log("standard");
+        let index = apiResponseData.tables[0].columns.indexOf(
+          "Workcenter_Standard_Quantity"
+        );
+        console.log(
+          "apiResponseData.tables[0].rows[0][index]",
+          apiResponseData.tables[0].rows[0][index]
+        );
+        center_rate = apiResponseData.tables[0].rows[0][index];
+      } else if (
+        bodyRequest.workcenter_rate === "ideal" &&
+        apiResponseData.tables[0].rows.length > 0
+      ) {
+        console.log("ideal");
+        let index = apiResponseData.tables[0].columns.indexOf(
+          "Workcenter_Ideal_Quantity"
+        );
+        console.log(
+          "apiResponseData.tables[0].rows[0][index]",
+          apiResponseData.tables[0].rows[0][index]
+        );
+        center_rate = apiResponseData.tables[0].rows[0][index];
+      } else if (
+        bodyRequest.workcenter_rate === "target" &&
+        apiResponseData.tables[0].rows.length > 0
+      ) {
+        console.log("target");
+        let index = apiResponseData.tables[0].columns.indexOf(
+          "Workcenter_Target_Quantity"
+        );
+        console.log(
+          "apiResponseData.tables[0].rows[0][index]",
+          apiResponseData.tables[0].rows[0][index]
+        );
+        center_rate = apiResponseData.tables[0].rows[0][index];
+      }
+      if (apiResponseData.length === 0) {
+        return res
+          .status(203)
+          .json({ error: "Workcenter data is not avalable" });
+      }
 
-    if (
-      bodyRequest.workcenter_rate === "standard" &&
-      apiResponseData.tables[0].rows.length > 0
-    ) {
-      console.log("standard");
-      let index = apiResponseData.tables[0].columns.indexOf(
-        "Workcenter_Standard_Quantity"
-      );
-      console.log(
-        "apiResponseData.tables[0].rows[0][index]",
-        apiResponseData.tables[0].rows[0][index]
-      );
-      center_rate = apiResponseData.tables[0].rows[0][index];
-    } else if (
-      bodyRequest.workcenter_rate === "ideal" &&
-      apiResponseData.tables[0].rows.length > 0
-    ) {
-      console.log("ideal");
-      let index = apiResponseData.tables[0].columns.indexOf(
-        "Workcenter_Ideal_Quantity"
-      );
-      console.log(
-        "apiResponseData.tables[0].rows[0][index]",
-        apiResponseData.tables[0].rows[0][index]
-      );
-      center_rate = apiResponseData.tables[0].rows[0][index];
-    } else if (
-      bodyRequest.workcenter_rate === "target" &&
-      apiResponseData.tables[0].rows.length > 0
-    ) {
-      console.log("target");
-      let index = apiResponseData.tables[0].columns.indexOf(
-        "Workcenter_Target_Quantity"
-      );
-      console.log(
-        "apiResponseData.tables[0].rows[0][index]",
-        apiResponseData.tables[0].rows[0][index]
-      );
-      center_rate = apiResponseData.tables[0].rows[0][index];
+      console.log("center_rate", center_rate);
+      const perHour = bodyRequest.pcs
+        ? (1 / center_rate) * bodyRequest.pcs
+        : 1 / center_rate;
+      const perMin = perHour * 60;
+      const perSec = perMin * 60;
+
+      const cooldown_no =
+        bodyRequest.percent_of_rate === 0
+          ? perSec
+          : (perSec * bodyRequest.percent_of_rate) / 100;
+      // console.log("workcenter =>", perHour);
+      // console.log("perMin =>", perMin);
+      // console.log("perSec =>", perSec);
+      console.log("cooldown_no =>", cooldown_no);
+      let adjustedCoolDown = cooldown_no - difference;
+      // let adjustedCoolDown =  difference - cooldown_no;
+
+      console.log("adjusted cooldown_no =>", adjustedCoolDown);
+
+      res.status(200).json({
+        total_cooldown_no: cooldown_no,
+        cooldown_no: adjustedCoolDown,
+      });
+    } else {
+      console.log("fall back sec =>", bodyRequest.fall_back_sec);
+      console.log("difference =>", difference);
+
+
+      res
+        .status(200)
+        .json({
+          total_cooldown_no: bodyRequest.fall_back_sec,
+          cooldown_no: bodyRequest.fall_back_sec - difference,
+        })
     }
-    if (apiResponseData.length === 0) {
-      return res.status(203).json({ error: "Workcenter data is not avalable" });
-    }
-
-    console.log("center_rate", center_rate);
-    const perHour = bodyRequest.pcs
-      ? (1 / center_rate) * bodyRequest.pcs
-      : 1 / center_rate;
-    const perMin = perHour * 60;
-    const perSec = perMin * 60;
-
-    const cooldown_no =
-      bodyRequest.percent_of_rate === 0
-        ? perSec
-        : (perSec * bodyRequest.percent_of_rate) / 100;
-    // console.log("workcenter =>", perHour);
-    // console.log("perMin =>", perMin);
-    // console.log("perSec =>", perSec);
-    console.log("cooldown_no =>", cooldown_no);
-    let adjustedCoolDown = cooldown_no - difference;
-    console.log("adjusted cooldown_no =>", adjustedCoolDown);
-
-    // res.status(200).json({ cooldown_no: adjustedCoolDown });
-    res
-      .status(200)
-      .json({ total_cooldown_no: cooldown_no, cooldown_no: adjustedCoolDown });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
