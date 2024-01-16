@@ -1,3 +1,9 @@
+let baseURL;
+
+chrome.storage.local.get(["baseURL"], function (result) {
+  console.log("URL =>", result.baseURL);
+  baseURL = result.baseURL;
+});
 // ==================================================== dom loading functions ============================================
 // as soon as extension loads  we need this to be done
 document.addEventListener("DOMContentLoaded", function () {
@@ -166,10 +172,7 @@ const verifyPcn = async (enteredPIN) => {
     redirect: "follow",
   };
   console.log(raw);
-  let apiResult = await fetch(
-    "https://backendphase2.azurewebsites.net/verify-pin",
-    requestOptions
-  );
+  let apiResult = await fetch(`${baseURL}/verify-pin`, requestOptions);
   apiResult = await apiResult.json();
   return apiResult;
 };
@@ -363,7 +366,7 @@ chrome.storage.local.get(["TokenValue", "pcn"]).then((result) => {
   authToken = result.TokenValue;
   console.log("REULT", result);
   if (authToken) {
-    fetch("https://backendphase2.azurewebsites.net/verify-pcn", {
+    fetch(`${baseURL}/verify-pcn`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -431,21 +434,31 @@ checkBox.addEventListener("click", function () {
   chrome.storage.local.set({ controlPanelCheck: isChecked });
 
   if (!isChecked) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      // Make sure there's an active tab
-      console.log("tabs[0]", tabs);
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, { isChecked: !isChecked });
+    chrome.tabs.query(
+      { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
+      function (tabs) {
+        tabs.forEach(function (tab) {
+          console.log("tabs[0]", tab);
+          if (tab) {
+            chrome.tabs.sendMessage(tab.id, { isChecked: !isChecked });
+          }
+        });
+        // Make sure there's an active tab
       }
-    });
+    );
   } else if (isChecked === true) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      // Make sure there's an active tab
-      console.log("tabs[0]", tabs);
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, { isCheckedTrue: true });
+    chrome.tabs.query(
+      { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
+      function (tabs) {
+        // Make sure there's an active tab
+        tabs.forEach(function (tab) {
+          console.log("tabs[0]", tab);
+          if (tab) {
+            chrome.tabs.sendMessage(tab.id, { isCheckedTrue: true });
+          }
+        });
       }
-    });
+    );
   }
 });
 
@@ -738,21 +751,24 @@ async function sendMessageOnSave() {
     percentRate: PercentRateField.value,
     letiable2: workcenterValuesString,
     fallbacksec: fallbackField.value,
-    callAPICheck: callAPICheck
+    callAPICheck: callAPICheck,
   };
 
   console.log("msgObj =>", msgObj);
 
   // Send the message to the content script in each tab
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    tabs.forEach((tab) => {
-      console.log("tab =>", tab, msgObj);
-      chrome.tabs.sendMessage(tab.id, {
-        message: "recordProduction",
-        data: msgObj,
+  chrome.tabs.query(
+    { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
+    (tabs) => {
+      tabs.forEach((tab) => {
+        console.log("tab =>", tab, msgObj);
+        chrome.tabs.sendMessage(tab.id, {
+          message: "recordProduction",
+          data: msgObj,
+        });
       });
-    });
-  });
+    }
+  );
 }
 
 // Call the function when the popup is opened or when you want to send the message.
@@ -783,11 +799,16 @@ if (saveButton) {
 
 // Function to send a message to the content script
 function sendMessageToContentScript(action, checked) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    console.log("activetab", tabs);
-    const activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, { action, checked });
-  });
+  chrome.tabs.query(
+    { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
+    function (tabs) {
+      tabs.forEach((tab) => {
+        console.log("activetab", tab);
+        const activeTab = tab;
+        chrome.tabs.sendMessage(activeTab.id, { action, checked });
+      });
+    }
+  );
 }
 
 // Add an event listener to the "heirarchy view" checkbox

@@ -1,50 +1,37 @@
 {
-    "name": "Systems X Toolbox",
-    "description": "Systems-X's web extension for PLEX ERP enhancements.",
-    "version": "0.1",
-    "manifest_version": 3,
-    "action": {
-        "default_icon": "images/SXIcon_toolbox.png",
-        "default_title": "Systems X Toolbox",
-        "default_popup": "html/popup.html"
-    },
-    "icons": {
-        "16": "images/SXIcon_toolbox.png",
-        "48": "images/SXIcon_toolbox.png",
-        "128": "images/SXIcon_toolbox.png"
-    },
-    "permissions": [
-        "scripting",
-        "activeTab",
-        "storage",
-        "tabGroups",
-        "tabs"
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "images/*"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
-        }
-    ],
-    "content_scripts": [
-        {
-            "js": [
-                "js/jquery.js",
-                "js/contentScript.js",
-                "js/content_Script.js"
-            ],
-            "css": [
-                "css/style.css"
-            ],
-            "matches": [
-                "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*",
-                "*://*.plex.com/ControlPanel/Production?WorkcenterKey*"
-            ],
-            "run_at": "document_end"
-        }
-    ]
+  "name": "Systems X Toolbox",
+  "description": "Systems-X's web extension for PLEX ERP enhancements.",
+  "version": "0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "images/SXIcon_toolbox.png",
+    "default_title": "Systems X Toolbox",
+    "default_popup": "html/popup.html"
+  },
+  "icons": {
+    "16": "images/SXIcon_toolbox.png",
+    "48": "images/SXIcon_toolbox.png",
+    "128": "images/SXIcon_toolbox.png"
+  },
+  "permissions": ["scripting", "activeTab", "storage", "tabGroups", "tabs"],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["images/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "js": ["js/jquery.js", "js/contentScript.js", "js/content_Script.js"],
+      "css": ["css/style.css"],
+      "matches": [
+        "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*",
+        "*://*.plex.com/ControlPanel/Production?WorkcenterKey*"
+      ],
+      "run_at": "document_end"
+    }
+  ]
 }

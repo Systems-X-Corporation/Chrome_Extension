@@ -1,4 +1,14 @@
 console.log("Content script loaded ali");
+let baseURL;
+
+chrome.storage.local.get(["baseURL"], function (result) {
+  console.log("URL =>", result.baseURL);
+  baseURL = result.baseURL;
+});
+
+let productionType = window.location.href.includes("test.cloud.plex.com")? "test": window.location.href.includes("cloud.plex.com")? "prod": "";
+console.log("productionType =>", productionType);
+
 // localStorage.setItem("callAPI", false);
 
 // var recordProductionButton =
@@ -328,7 +338,7 @@ if (callAPI === "true" && callAPI !== undefined) {
     // Create the data to send in the POST request
     var dataToSend = {
       workcenter_no: widgetHeaderData,
-      // pcs: inputValue,
+      production_type: productionType,
       percent_of_rate: percentRate,
       workcenter_rate: variable2,
       Workcenter_Key: myParam,
@@ -354,7 +364,7 @@ if (callAPI === "true" && callAPI !== undefined) {
       console.log("hello");
       // recordProductionButton.click();
       console.log("firstLi.style.display =>", firstLi);
-      fetch("https://backendphase2.azurewebsites.net/cooldown", {
+      fetch(`${baseURL}/cooldown`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
