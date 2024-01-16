@@ -72,7 +72,10 @@ router.post("/cooldown", async (req, res) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://cloud.plex.com/api/datasources/237656/execute?Accept=application/json&Accept-Encoding=gzip,deflate&Content-Type=application/json;charset=utf-8",
+      // url: "https://cloud.plex.com/api/datasources/237656/execute?Accept=application/json&Accept-Encoding=gzip,deflate&Content-Type=application/json;charset=utf-8",
+      url: `https://${
+        bodyRequest.production_type === "test" ? "test." : ""
+      }cloud.plex.com/api/datasources/237656/execute?Accept=application/json&Accept-Encoding=gzip,deflate&Content-Type=application/json;charset=utf-8`,
       headers: {
         "Content-Type": "text/plain",
         Authorization: `Basic ${credential.authToken}`,
@@ -206,13 +209,10 @@ router.post("/cooldown", async (req, res) => {
       console.log("fall back sec =>", bodyRequest.fall_back_sec);
       console.log("difference =>", difference);
 
-
-      res
-        .status(200)
-        .json({
-          total_cooldown_no: bodyRequest.fall_back_sec,
-          cooldown_no: bodyRequest.fall_back_sec - difference,
-        })
+      res.status(200).json({
+        total_cooldown_no: bodyRequest.fall_back_sec,
+        cooldown_no: bodyRequest.fall_back_sec - difference,
+      });
     }
   } catch (error) {
     console.error(error);
