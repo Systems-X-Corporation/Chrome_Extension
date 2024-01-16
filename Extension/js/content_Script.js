@@ -1,4 +1,4 @@
-console.log("Content script loaded");
+console.log("Content script loaded ali");
 // localStorage.setItem("callAPI", false);
 
 // var recordProductionButton =
