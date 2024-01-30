@@ -6,7 +6,11 @@ chrome.storage.local.get(["baseURL"], function (result) {
   baseURL = result.baseURL;
 });
 
-let productionType = window.location.href.includes("test.cloud.plex.com")? "test": window.location.href.includes("cloud.plex.com")? "prod": "";
+let productionType = window.location.href.includes("test.cloud.plex.com")
+  ? "test"
+  : window.location.href.includes("cloud.plex.com")
+  ? "prod"
+  : "";
 console.log("productionType =>", productionType);
 
 // localStorage.setItem("callAPI", false);
@@ -260,8 +264,10 @@ let variable2 = localStorage.getItem("variable2");
 let fallbacksec = localStorage.getItem("fallbacksec");
 const widgetHeaderData = document.querySelector(".widget-header-1").textContent;
 console.log("Data from widget-header-1:", widgetHeaderData);
-
-if (field_name[2].textContent == "Quantity per Container") {
+console.log("field_name", field_name);
+if (field_name[2].textContent === "Quantity per Container") {
+  console.log("field_name[2]", field_name[2]);
+  console.log("hellofield_name[2].textContent", field_name[2].textContent);
   if (input_Field[1].value.length !== 0) {
     inputValue = input_Field[1].value;
   }
@@ -270,6 +276,31 @@ if (field_name[2].textContent == "Quantity per Container") {
     // This function will be called when the input value changes
     if (input_Field[1].value.length !== 0) {
       inputValue = input_Field[1].value;
+      console.log("inputValue", inputValue);
+    } else {
+      inputValue = 0;
+    }
+    console.log("Extracted Value:", inputValue);
+  });
+}
+if (field_name[1].textContent === "Quantity per Container") {
+  console.log(
+    "field_name[1]",
+    field_name[1].parentNode.parentNode.parentElement.children[1].children[0]
+      .value
+  );
+  console.log("hellofield_name[1].textContent", field_name[1].textContent);
+  let el =
+    field_name[1].parentNode.parentNode.parentElement.children[1].children[0];
+  console.log("el ==>", el);
+  console.log("el.value ==>", el.value);
+  el.addEventListener("change", function () {
+    console.log("Quantity per Container change =>");
+    console.log("el.value ==>", el.value);
+    // This function will be called when the input value changes
+    if (el.value.length !== 0) {
+      inputValue = el.value;
+      console.log("inputValue", inputValue);
     } else {
       inputValue = 0;
     }
@@ -318,7 +349,7 @@ if (callAPI === "true" && callAPI !== undefined) {
     console.log("pcnName", data.pcnName);
     const pcnName = data.pcnName;
 
-    if (field_name[2].textContent == "Quantity per Container") {
+    if (field_name[2].textContent === "Quantity per Container") {
       console.log("test-1 =>", input_Field[1].value);
       if (input_Field[1].value.length !== 0) {
         inputValue = input_Field[1].value;
@@ -326,7 +357,7 @@ if (callAPI === "true" && callAPI !== undefined) {
         inputValue = 0;
       }
     }
-    if (field_name[1].textContent == "Production") {
+    if (field_name[1].textContent === "Production") {
       console.log("test-2 =>", input_Field[0].value);
       if (input_Field[0].value.length !== 0) {
         inputValue = input_Field[0].value;
@@ -375,6 +406,32 @@ if (callAPI === "true" && callAPI !== undefined) {
           // console.log("response", await response.json());
           let ApiResponse = await response.json();
           console.log("ApiResponse", ApiResponse);
+          if (ApiResponse.error === "No data found!") {
+            document.getElementById("popupHeadHeading").innerText =
+              "Webservice API data not available! Please try later.";
+            document.getElementById("system-x-close").innerText = "Close Popup";
+            document.getElementById("system-x-min").style.display = "none";
+            document.getElementById("againProd").style.display = "none";
+            let popuptimer = document.getElementById("popup_timer");
+            document.getElementById("total_cooldown_no").innerText = "N/A";
+            document.getElementById("adjusted_cooldown").innerText = "N/A";
+            popuptimer.style.display = "flex";
+            setTimer("No data!");
+            return;
+          }
+          if (ApiResponse.error === "Workcenter data is not avalable") {
+            document.getElementById("popupHeadHeading").innerText =
+              "Workcenter data not found! Contact support.";
+            document.getElementById("system-x-close").innerText = "Close Popup";
+            document.getElementById("system-x-min").style.display = "none";
+            document.getElementById("againProd").style.display = "none";
+            let popuptimer = document.getElementById("popup_timer");
+            document.getElementById("total_cooldown_no").innerText = "N/A";
+            document.getElementById("adjusted_cooldown").innerText = "N/A";
+            popuptimer.style.display = "flex";
+            setTimer("No data!");
+            return;
+          }
           let cooldown_no = ApiResponse.cooldown_no;
           let total_cooldown_no = ApiResponse.total_cooldown_no;
           document.getElementById("total_cooldown_no").innerText =
@@ -540,10 +597,10 @@ style="
     "images/warning.png"
   )}" width="90px" alt="" />
   <h1 style="margin: 2px">WARNING!</h1>
-  <div>You are not allowed to record production at this time</div>
+  <div id="popupHeadHeading">You are not allowed to record production at this time</div>
   <div>Total Cooldown: <span id="total_cooldown_no">500s</span></div>
   <div>Adjusted Cooldown: <span id="adjusted_cooldown">486s</span></div>
-  <div>
+  <div id="againProd">
     Time to record production again:
     <span id="countdown">373s </span>
   </div>
@@ -695,43 +752,52 @@ var currentInterval;
 
 function setTimer(time) {
   // Clear the previous interval if it exists
-  if (currentInterval) {
-    clearInterval(currentInterval);
-  }
-
-  var x = setInterval(function () {
-    document.getElementById("countdown").innerHTML = time + "s ";
-    document.getElementById("countdown2").innerHTML = time + "s ";
-    time--;
-    if (time < 0) {
-      if (popuptimer) {
-        popuptimer.style.display = "none";
-        console.log("step-1");
-
-        // var firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
-        // var secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
-        var elementData = document.getElementById("record_button");
-
-        console.log("test element =>", elementData);
-        if (firstLi) {
-          firstLi.style.display = "inline-block";
-        } else {
-          console.error("Element not found with the provided XPath.");
-        }
-
-        if (secondLi) {
-          secondLi.style.display = "none";
-          elementData.style.display = "flex";
-        } else {
-          console.error("Element not found with the provided XPath.");
-        }
-      }
-      clearInterval(x);
+  if (time === "No data!") {
+    return;
+  } else {
+    document.getElementById("popupHeadHeading").innerText =
+      "You are not allowed to record production at this time";
+    document.getElementById("againProd").style.display = "block";
+    document.getElementById("system-x-close").innerText = "Update Production";
+    document.getElementById("system-x-min").style.display = "block";
+    if (currentInterval) {
+      clearInterval(currentInterval);
     }
-  }, 1000);
 
-  // Set the current interval to the new interval
-  currentInterval = x;
+    var x = setInterval(function () {
+      document.getElementById("countdown").innerHTML = time + "s ";
+      document.getElementById("countdown2").innerHTML = time + "s ";
+      time--;
+      if (time < 0) {
+        if (popuptimer) {
+          popuptimer.style.display = "none";
+          console.log("step-1");
+
+          // var firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+          // var secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+          var elementData = document.getElementById("record_button");
+
+          console.log("test element =>", elementData);
+          if (firstLi) {
+            firstLi.style.display = "inline-block";
+          } else {
+            console.error("Element not found with the provided XPath.");
+          }
+
+          if (secondLi) {
+            secondLi.style.display = "none";
+            elementData.style.display = "flex";
+          } else {
+            console.error("Element not found with the provided XPath.");
+          }
+        }
+        clearInterval(x);
+      }
+    }, 1000);
+
+    // Set the current interval to the new interval
+    currentInterval = x;
+  }
 }
 
 // function setTimer(time) {
