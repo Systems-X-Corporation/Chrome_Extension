@@ -97,30 +97,46 @@ router.post("/cooldown", async (req, res) => {
     // console.log(
     //   "======================================== last production time calculation Time ==========================================="
     // );
+    if (apiResponseData.length === 0) {
+      return res.status(203).json({ error: "Workcenter data is not avalable" });
+    }
     let timeIndex =
       apiResponseData.tables[0].columns.indexOf("Production_Time");
+    let difference;
     console.log("temp1 index", timeIndex);
-    let lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
-    lastProductionTime = lastProductionTime.toLocaleString("en-US", {
-      timeZone: "UTC",
-    });
+    let lastProductionTime;
+    if (apiResponseData.tables[0].rows[0].length >= 1) {
+      lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
+      if (lastProductionTime != null) {
+        lastProductionTime = lastProductionTime.toLocaleString("en-US", {
+          timeZone: "UTC",
+        });
+        let currentTime = new Date();
+        // Format the date in the desired format
+        currentTime = currentTime.toISOString();
+        currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
+        console.log("current date", typeof currentTime, "date=>", currentTime);
+        let date1 = new Date(currentTime);
+        let date2 = new Date(lastProductionTime);
+
+        // Calculate the difference in milliseconds
+        difference = date1 - date2;
+        difference = difference / 1000;
+      } else {
+        difference = 0;
+      }
+    } else if (apiResponseData.tables[0].rows[0].length <= 1) {
+      return res.status(203).json({
+        error: "No data found!",
+      });
+    }
     console.log(
       "last production lastProductionTime",
       typeof lastProductionTime,
       "date=>",
       lastProductionTime
     );
-    let currentTime = new Date();
-    // Format the date in the desired format
-    currentTime = currentTime.toISOString();
-    currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
-    console.log("current date", typeof currentTime, "date=>", currentTime);
-    var date1 = new Date(currentTime);
-    var date2 = new Date(lastProductionTime);
 
-    // Calculate the difference in milliseconds
-    let difference = date1 - date2;
-    difference = difference / 1000;
     console.log("diiference is => ", difference);
     console.log(
       "======================================== Time ==========================================="
@@ -174,11 +190,6 @@ router.post("/cooldown", async (req, res) => {
           apiResponseData.tables[0].rows[0][index]
         );
         center_rate = apiResponseData.tables[0].rows[0][index];
-      }
-      if (apiResponseData.length === 0) {
-        return res
-          .status(203)
-          .json({ error: "Workcenter data is not avalable" });
       }
 
       console.log("center_rate", center_rate);
