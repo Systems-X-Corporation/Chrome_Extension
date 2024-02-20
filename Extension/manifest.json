@@ -13,23 +13,41 @@
     "48": "images/SXIcon_toolbox.png",
     "128": "images/SXIcon_toolbox.png"
   },
-  "permissions": ["scripting", "activeTab", "storage", "tabGroups", "tabs"],
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "tabGroups",
+    "tabs"
+  ],
   "background": {
     "service_worker": "js/background.js"
   },
   "web_accessible_resources": [
     {
-      "resources": ["images/*"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "images/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "content_scripts": [
     {
-      "js": ["js/jquery.js", "js/contentScript.js", "js/content_Script.js"],
-      "css": ["css/style.css"],
+      "js": [
+        "js/jquery.js",
+        "js/contentScript.js",
+        "js/content_Script.js"
+      ],
+      "css": [
+        "css/style.css"
+      ],
       "matches": [
         "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*",
-        "*://*.plex.com/ControlPanel/Production?WorkcenterKey*"
+        "*://*.plex.com/ControlPanel/Production?WorkcenterKey*",
+        "*://*.plex.com/ControlPanel/*",
+        "*://*.plex.com/ControlPanel/Platform/*"
       ],
       "run_at": "document_end"
     }

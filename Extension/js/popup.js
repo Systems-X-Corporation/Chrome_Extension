@@ -1,3 +1,20 @@
+// let showErrorMsg = document.getElementById("showErrorMsg");
+// // let dataShowExtensionContent;
+// (async () => {
+//   let mainScrennExtension = document.getElementById("mainScrennExtension");
+//   let dataShowExtensionContent = await chrome.storage.local.get(
+//     "showExtensionContent"
+//   );
+//   console.log("dataShowExtensionContent", dataShowExtensionContent);
+//   if (!dataShowExtensionContent.showExtensionContent) {
+//     showErrorMsg.style.display = "flex";
+//     showErrorMsg.style.backgroundColor = "white";
+//     mainScrennExtension.style.display = "none";
+//   }
+
+//   if (dataShowExtensionContent.showExtensionContent) {
+// showErrorMsg.style.display = "none";
+// mainScrennExtension.style.display = "block";
 let baseURL;
 
 chrome.storage.local.get(["baseURL"], function (result) {
@@ -51,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 document.addEventListener("DOMContentLoaded", function () {
   const navigatePanel = document.getElementById("settings");
+  console.log("navigatePanel", navigatePanel);
   const iframeContainer = document.getElementById("main_control_panel");
   const mainControlPanel = document.getElementById("Wrapper_div_Extension");
   const innerBody = document.querySelector(".production_container");
@@ -334,6 +352,7 @@ checkbox.addEventListener("change", async function () {
     // chrome.storage.local.get(["ShowPopup"]).then((result) => {});
     // Reloading the page after click
     let tab = await getCurrentTab;
+    console.log("tab", tab);
     // chrome.tabs.update(tab.id, { url: tab.url });
     chrome.tabs.sendMessage(tab.id, { isChecked: true });
     // const pin_container = document.getElementById("pin-container");
@@ -362,6 +381,7 @@ document.querySelector("#quicktoolimg").addEventListener("click", function () {
     .focus();
 });
 chrome.storage.local.get(["TokenValue", "pcn"]).then((result) => {
+  console.log("result", result);
   pcn = result.pcn;
   authToken = result.TokenValue;
   console.log("REULT", result);
@@ -790,7 +810,10 @@ const saveButtonObserver = new MutationObserver((mutations) => {
 // Start observing the "Save" button element
 const saveButton = document.getElementById("save_btn");
 if (saveButton) {
-  saveButtonObserver.observe(saveButton, { childList: true, subtree: true });
+  saveButtonObserver.observe(saveButton, {
+    childList: true,
+    subtree: true,
+  });
 }
 
 // popup.js
@@ -906,3 +929,6 @@ const getPcnName = async () => {
   console.log("pcnName", data.pcnName);
   return data.pcnName;
 };
+//   }
+// })();
+// // initial();

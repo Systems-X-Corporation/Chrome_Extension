@@ -446,3 +446,7 @@ input::-webkit-inner-spin-button {
   padding: 10px;
   text-align: center;
 }
+
+#showErrorMsg {
+  display: none;
+}

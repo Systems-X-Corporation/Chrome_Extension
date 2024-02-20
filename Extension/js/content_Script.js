@@ -265,7 +265,7 @@ let fallbacksec = localStorage.getItem("fallbacksec");
 const widgetHeaderData = document.querySelector(".widget-header-1").textContent;
 console.log("Data from widget-header-1:", widgetHeaderData);
 console.log("field_name", field_name);
-if (field_name[2].textContent === "Quantity per Container") {
+if (field_name[2]?.textContent === "Quantity per Container") {
   console.log("field_name[2]", field_name[2]);
   console.log("hellofield_name[2].textContent", field_name[2].textContent);
   if (input_Field[1].value.length !== 0) {
@@ -283,7 +283,7 @@ if (field_name[2].textContent === "Quantity per Container") {
     console.log("Extracted Value:", inputValue);
   });
 }
-if (field_name[1].textContent === "Quantity per Container") {
+if (field_name[1]?.textContent === "Quantity per Container") {
   console.log(
     "field_name[1]",
     field_name[1].parentNode.parentNode.parentElement.children[1].children[0]
@@ -307,7 +307,7 @@ if (field_name[1].textContent === "Quantity per Container") {
     console.log("Extracted Value:", inputValue);
   });
 }
-if (field_name[1].textContent == "Production") {
+if (field_name[1]?.textContent == "Production") {
   if (input_Field[0].value.length !== 0) {
     inputValue = input_Field[0].value;
   }

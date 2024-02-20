@@ -15,12 +15,89 @@ for (let i = 0; i < scripts.length; i++) {
     break;
   }
 }
-pcnarr = pcnarr.split("'")[1];
-pcnarr = pcnarr.split("'")[0];
-pcnarr = pcnarr.split(/\\/).join("");
-pcnarr = JSON.parse(pcnarr);
-const pcn = pcnarr.customer.pcn;
+let pcn;
+try {
+  console.log("pcnarr", pcnarr);
+  let pcnarrNew = pcnarr.split("'")[1];
+  console.log("pcnarr", pcnarr);
+  pcnarrNew = pcnarr.split("'")[0];
+  console.log("pcnarr", pcnarr);
+  pcnarrNew = pcnarr.split(/\\/).join("");
+  console.log("pcnarr", pcnarr);
+  pcnarrNew = JSON.parse(pcnarr);
+  console.log("pcnarr", pcnarr);
+  pcn = pcnarr.customer.pcn;
+} catch (error) {
+  console.log("error", error);
+
+  let startIndex = pcnarr.indexOf("plex.appState = plex.parsing.parseJSON(");
+
+  console.log("startIndex", startIndex);
+  if (startIndex !== -1) {
+    // Find the index of the first ' after the start index
+    let firstSingleQuoteIndex = pcnarr.indexOf("'", startIndex);
+    let secondSingleQuoteIndex;
+    if (firstSingleQuoteIndex !== -1) {
+      // Find the index of the second ' after the first '
+      secondSingleQuoteIndex = pcnarr.indexOf("'", firstSingleQuoteIndex + 1);
+
+      if (secondSingleQuoteIndex !== -1) {
+        console.log(
+          "Index of the first ' after the specified string:",
+          firstSingleQuoteIndex
+        );
+        console.log(
+          "Index of the second ' after the specified string:",
+          secondSingleQuoteIndex
+        );
+      } else {
+        console.log(
+          "Second single quote not found after the specified string."
+        );
+      }
+    } else {
+      console.log("First single quote not found after the specified string.");
+    }
+    let extractedString = pcnarr.substring(
+      firstSingleQuoteIndex + 1,
+      secondSingleQuoteIndex
+    );
+    try {
+      console.log(extractedString);
+      // let pcnarrNew = JSON.parse(extractedString);
+      // Decode escape characters in the string
+      let decodedString = extractedString.replace(/\\(.)/g, "$1");
+      console.log("decodedString ==>", decodedString);
+      // Parse the string to an object
+      let pcnarrNew = JSON.parse(decodedString);
+      console.log("pcnarrNew", pcnarrNew);
+      pcn = pcnarrNew.customer.pcn;
+      // const pcn = pcnNumber;
+      console.log("pcn", pcn);
+    } catch (error) {
+      console.log("error", error);
+    }
+  } else {
+    console.log("Specified string not found in the input.");
+  }
+}
+// Regular expression to match "pcn": followed by a number
+// console.log("pcnarr", pcnarr);
+// const regex = /"mainPCN":(\d+),/;
+// // Executing the regular expression on the input string
+// const match = regex.exec(pcnarr);
+// console.log("match", match);
+// // Extracting the number if a match is found
+// let pcnNumber = null;
+// if (match && match.length > 1) {
+//   pcnNumber = parseInt(match[1]);
+// }
+
+// console.log("PCN Number:", pcnNumber);
+
+// const pcn = pcnNumber;
 console.log("pcn", pcn);
+// if (!pcn) {}
 // Adding the PCN number to the local storage
 chrome.storage.local.set({ pcn: pcn }).then(() => {});
 
