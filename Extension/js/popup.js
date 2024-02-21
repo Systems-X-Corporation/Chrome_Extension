@@ -775,20 +775,20 @@ async function sendMessageOnSave() {
   };
 
   console.log("msgObj =>", msgObj);
-
+  let getCurrentTabDetails = await getCurrentTab;
   // Send the message to the content script in each tab
-  chrome.tabs.query(
-    { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
-    (tabs) => {
-      tabs.forEach((tab) => {
-        console.log("tab =>", tab, msgObj);
-        chrome.tabs.sendMessage(tab.id, {
-          message: "recordProduction",
-          data: msgObj,
-        });
-      });
-    }
-  );
+  // chrome.tabs.query(
+  //   { url: ["*://cloud.plex.com/*", "*://test.cloud.plex.com/*"] },
+  //   (tabs) => {
+  //     tabs.forEach((tab) => {
+  console.log("tab =>", getCurrentTabDetails, msgObj);
+  chrome.tabs.sendMessage(getCurrentTabDetails.id, {
+    message: "recordProduction",
+    data: msgObj,
+  });
+  //   });
+  // }
+  // );
 }
 
 // Call the function when the popup is opened or when you want to send the message.
