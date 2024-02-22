@@ -45,7 +45,8 @@
       ],
       "matches": [
         "*://*.plex.com/Maintenance/WorkRequests/ViewWorkRequestForm*",
-        "*://*.plex.com/ControlPanel/Production?WorkcenterKey*"
+        "*://*.plex.com/ControlPanel/Production?WorkcenterKey*",
+        "*://*.plex.com/ControlPanel/*"
       ],
       "run_at": "document_end"
     }
