@@ -147,34 +147,36 @@ function observeElementAppended(element, callback) {
 // observeElementAppended(ulElement, (selectedElement) => {
 console.log("Element found:", ulElement);
 if (ulElement) {
-  // Create a new li element with specific content
-  const newLi = document.createElement("li");
-  newLi.style.marginLeft = "5px";
-  // newLi.style.display = "none";
-  newLi.className = "disabled";
-  newLi.setAttribute(
-    "data-bind",
-    "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
-  );
-  newLi.innerHTML = `<a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
+  if (document.URL.includes("Production?")) {
+    // Create a new li element with specific content
+    const newLi = document.createElement("li");
+    newLi.style.marginLeft = "5px";
+    // newLi.style.display = "none";
+    newLi.className = "disabled";
+    newLi.setAttribute(
+      "data-bind",
+      "title: $data.title, click: $data.executeAction, css: { 'disabled': !$data.isEnabled() }, visible: $data.visible()"
+    );
+    newLi.innerHTML = `<a class="record-production-actionbar-button disabled" data-bind="id: $data.id, href: $data.href, css: {'disabled': !$data.isEnabled() }" id="" href="">
               <i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i>
               <span class="record-production-action-title" data-bind="text: $data.text">Record Production</span>
             </a>`;
 
-  console.log("children =>", ulElement);
-  // Check if there is at least one child
-  if (ulElement.children.length >= 1) {
-    // Insert the new li element as the second child
-    ulElement.insertBefore(newLi, ulElement.children[1]);
-    firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
-    ulElement.querySelector(".plex-actions li:nth-child(1)").style.display =
-      "none";
-    secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
-  } else {
-    // If there are no children, simply append the new li element
-    ulElement.appendChild(newLi);
-    firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
-    secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+    console.log("children =>", ulElement);
+    // Check if there is at least one child
+    if (ulElement.children.length >= 1) {
+      // Insert the new li element as the second child
+      ulElement.insertBefore(newLi, ulElement.children[1]);
+      firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+      ulElement.querySelector(".plex-actions li:nth-child(1)").style.display =
+        "none";
+      secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+    } else {
+      // If there are no children, simply append the new li element
+      ulElement.appendChild(newLi);
+      firstLi = ulElement.querySelector(".plex-actions li:nth-child(1)");
+      secondLi = ulElement.querySelector(".plex-actions li:nth-child(2)");
+    }
   }
 } else {
   console.error("Element not found with the provided XPath.");
@@ -324,15 +326,16 @@ if (field_name[1]?.textContent == "Production") {
 }
 const callAPI = localStorage.getItem("callAPI");
 console.log("callAPI =>", callAPI);
-if (callAPI === "true" && callAPI !== undefined) {
-  let tableandrowelement = document.createElement("div");
-  tableandrowelement.setAttribute("id", "record_button");
-  tableandrowelement.style.top = "-42px";
-  tableandrowelement.style.left = "3px";
-  tableandrowelement.style.position = "relative";
-  tableandrowelement.style.width = "211px";
-  // tableandrowelement.innerHTML = `<a style="padding: 6px 10px;" class=" ${localStorage.getItem("recordProductionButtonDisabled")? "button_new": "record-production-actionbar-button"}"><i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i><span class="record-production-action-title" data-bind="text: $data.text">${localStorage.getItem("recordProductionButtonDisabled")? "Plex Disabled": "Record Production" }</span></a>`;
-  tableandrowelement.innerHTML = `
+if (document.URL.includes("Production?")) {
+  if (callAPI === "true" && callAPI !== undefined) {
+    let tableandrowelement = document.createElement("div");
+    tableandrowelement.setAttribute("id", "record_button");
+    tableandrowelement.style.top = "-42px";
+    tableandrowelement.style.left = "3px";
+    tableandrowelement.style.position = "relative";
+    tableandrowelement.style.width = "211px";
+    // tableandrowelement.innerHTML = `<a style="padding: 6px 10px;" class=" ${localStorage.getItem("recordProductionButtonDisabled")? "button_new": "record-production-actionbar-button"}"><i class="plex-actionbar-icon record-production-action-icon plex-icon-cp-record-production" data-bind="css: $data.iconClass"></i><span class="record-production-action-title" data-bind="text: $data.text">${localStorage.getItem("recordProductionButtonDisabled")? "Plex Disabled": "Record Production" }</span></a>`;
+    tableandrowelement.innerHTML = `
   <button style="padding: 4px 10px; display: flex;
   color: white;     width: 215px !important;
   " class=" button_new record-production-actionbar-button" disable>
@@ -340,192 +343,196 @@ if (callAPI === "true" && callAPI !== undefined) {
 <span class="" data-bind="text: $data.text">Record Production</span>
 </button>`;
 
-  ulElement.insertAdjacentElement("afterend", tableandrowelement);
-  // ulElement.append(tableandrowelement);
-  tableandrowelement.addEventListener("click", async function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const myParam = urlParams.get("WorkcenterKey");
-    const data = await chrome.storage.local.get(["pcnName"]);
-    console.log("pcnName", data.pcnName);
-    const pcnName = data.pcnName;
+    ulElement.insertAdjacentElement("afterend", tableandrowelement);
 
-    if (field_name[2].textContent === "Quantity per Container") {
-      console.log("test-1 =>", input_Field[1].value);
-      if (input_Field[1].value.length !== 0) {
-        inputValue = input_Field[1].value;
-      } else {
-        inputValue = 0;
+    // ulElement.append(tableandrowelement);
+    tableandrowelement.addEventListener("click", async function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const myParam = urlParams.get("WorkcenterKey");
+      const data = await chrome.storage.local.get(["pcnName"]);
+      console.log("pcnName", data.pcnName);
+      const pcnName = data.pcnName;
+
+      if (field_name[2].textContent === "Quantity per Container") {
+        console.log("test-1 =>", input_Field[1].value);
+        if (input_Field[1].value.length !== 0) {
+          inputValue = input_Field[1].value;
+        } else {
+          inputValue = 0;
+        }
       }
-    }
-    if (field_name[1].textContent === "Production") {
-      console.log("test-2 =>", input_Field[0].value);
-      if (input_Field[0].value.length !== 0) {
-        inputValue = input_Field[0].value;
-      } else {
-        inputValue = 0;
+      if (field_name[1].textContent === "Production") {
+        console.log("test-2 =>", input_Field[0].value);
+        if (input_Field[0].value.length !== 0) {
+          inputValue = input_Field[0].value;
+        } else {
+          inputValue = 0;
+        }
       }
-    }
 
-    // Create the data to send in the POST request
-    var dataToSend = {
-      workcenter_no: widgetHeaderData,
-      production_type: productionType,
-      percent_of_rate: percentRate,
-      workcenter_rate: variable2,
-      Workcenter_Key: myParam,
-      pcnName: pcnName,
-    };
+      // Create the data to send in the POST request
+      var dataToSend = {
+        workcenter_no: widgetHeaderData,
+        production_type: productionType,
+        percent_of_rate: percentRate,
+        workcenter_rate: variable2,
+        Workcenter_Key: myParam,
+        pcnName: pcnName,
+      };
 
-    inputValue !== 0 ? (dataToSend.pcs = inputValue) : "";
-    localStorage.getItem("fallbacksec") !== ""
-      ? (dataToSend.fall_back_sec = localStorage.getItem("fallbacksec"))
-      : "";
+      inputValue !== 0 ? (dataToSend.pcs = inputValue) : "";
+      localStorage.getItem("fallbacksec") !== ""
+        ? (dataToSend.fall_back_sec = localStorage.getItem("fallbacksec"))
+        : "";
 
-    console.log("Data to send in the POST request:", dataToSend);
+      console.log("Data to send in the POST request:", dataToSend);
 
-    const callAPI = localStorage.getItem("callAPI");
+      const callAPI = localStorage.getItem("callAPI");
 
-    console.log("result.callAPI =>", callAPI === "true");
-    // if (localStorage.getItem("recordProductionButtonDisabled") === false) {
-    if (
-      callAPI !== undefined &&
-      callAPI === "true"
-      // && !localStorage.getItem("fallbacksec")
-    ) {
-      console.log("hello");
-      // recordProductionButton.click();
-      console.log("firstLi.style.display =>", firstLi);
-      fetch(`${baseURL}/cooldown`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      })
-        .then(async (response) => {
-          // console.log("response", await response.json());
-          let ApiResponse = await response.json();
-          console.log("ApiResponse", ApiResponse);
-          if (ApiResponse.error === "No data found!") {
-            document.getElementById("popupHeadHeading").innerText =
-              "Webservice API data not available! Please try later.";
-            document.getElementById("system-x-close").innerText = "Close Popup";
-            document.getElementById("system-x-min").style.display = "none";
-            document.getElementById("againProd").style.display = "none";
-            let popuptimer = document.getElementById("popup_timer");
-            document.getElementById("total_cooldown_no").innerText = "N/A";
-            document.getElementById("adjusted_cooldown").innerText = "N/A";
-            popuptimer.style.display = "flex";
-            setTimer("No data!");
-            return;
-          }
-          if (ApiResponse.error === "Workcenter data is not avalable") {
-            document.getElementById("popupHeadHeading").innerText =
-              "Workcenter data not found! Contact support.";
-            document.getElementById("system-x-close").innerText = "Close Popup";
-            document.getElementById("system-x-min").style.display = "none";
-            document.getElementById("againProd").style.display = "none";
-            let popuptimer = document.getElementById("popup_timer");
-            document.getElementById("total_cooldown_no").innerText = "N/A";
-            document.getElementById("adjusted_cooldown").innerText = "N/A";
-            popuptimer.style.display = "flex";
-            setTimer("No data!");
-            return;
-          }
-          let cooldown_no = ApiResponse.cooldown_no;
-          let total_cooldown_no = ApiResponse.total_cooldown_no;
-          document.getElementById("total_cooldown_no").innerText =
-            Math.ceil(total_cooldown_no) + "s";
-          document.getElementById("adjusted_cooldown").innerText =
-            Math.ceil(cooldown_no) + "s";
-          // console.log("cooldown_no", cooldown_no);
-          // console.log("cooldown_no", Math.ceil(cooldown_no));
-          // console.log("API Response Status:", response.status);
-          // console.log("API Response:", response);
-          var elementData = document.getElementById("record_button");
-
-          // var firstLi = ulElement.querySelector(
-          //   ".plex-actions li:nth-child(1)"
-          // );
-          // var secondLi = ulElement.querySelector(
-          //   ".plex-actions li:nth-child(2)"
-          // );
-
-          if (response.status == 200) {
-            let popuptimer = document.getElementById("popup_timer");
-
-            if (firstLi) {
-              console.log("test element =>", firstLi);
-              firstLi.style.display = "none";
-            } else {
-              console.error("Element not found with the provided XPath.");
-            }
-
-            if (secondLi) {
-              secondLi.style.display = "inline-block";
-              elementData.style.display = "none";
-            } else {
-              console.error("Element not found with the provided XPath.");
-            }
-
-            console.log("response test =>", ApiResponse);
-            if (cooldown_no > 0) {
+      console.log("result.callAPI =>", callAPI === "true");
+      // if (localStorage.getItem("recordProductionButtonDisabled") === false) {
+      if (
+        callAPI !== undefined &&
+        callAPI === "true"
+        // && !localStorage.getItem("fallbacksec")
+      ) {
+        console.log("hello");
+        // recordProductionButton.click();
+        console.log("firstLi.style.display =>", firstLi);
+        fetch(`${baseURL}/cooldown`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        })
+          .then(async (response) => {
+            // console.log("response", await response.json());
+            let ApiResponse = await response.json();
+            console.log("ApiResponse", ApiResponse);
+            if (ApiResponse.error === "No data found!") {
+              document.getElementById("popupHeadHeading").innerText =
+                "Webservice API data not available! Please try later.";
+              document.getElementById("system-x-close").innerText =
+                "Close Popup";
+              document.getElementById("system-x-min").style.display = "none";
+              document.getElementById("againProd").style.display = "none";
+              let popuptimer = document.getElementById("popup_timer");
+              document.getElementById("total_cooldown_no").innerText = "N/A";
+              document.getElementById("adjusted_cooldown").innerText = "N/A";
               popuptimer.style.display = "flex";
-              const time = Math.ceil(cooldown_no);
-              setTimer(time);
-            } else {
-              console.log("firstLi.style.display =>");
-              firstLi.style.display = "inline-block";
-              firstLi.click();
-              setTimeout(() => {
-                // popuptimer.style.display = "none";
-
-                if (firstLi) {
-                  console.log("test element =>", firstLi);
-                  firstLi.style.display = "none";
-                } else {
-                  console.error("Element not found with the provided XPath.");
-                }
-
-                if (secondLi) {
-                  secondLi.style.display = "inline-block";
-                  elementData.style.display = "flex";
-                } else {
-                  console.error("Element not found with the provided XPath.");
-                }
-              }, 1000);
+              setTimer("No data!");
+              return;
             }
-          } else {
-            console.log("Error:", response.status);
-            // popuptimer.style.display = "none";
-          }
-          console.log("finale response =>", ApiResponse);
-          return await ApiResponse;
-        })
-        .then((data) => {
-          console.log("API Response:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    } else if ((await localStorage.getItem("fallbacksec").length) !== 0) {
-      let ApiResponse = localStorage.getItem("fallbacksec");
-      console.log("ApiResponse", ApiResponse);
-      let cooldown_no = ApiResponse;
-      // console.log("cooldown_no", cooldown_no);
-      // console.log("cooldown_no", Math.ceil(cooldown_no));
-      // console.log("API Response Status:", response);
-      let popuptimer = document.getElementById("popup_timer");
-      popuptimer.style.display = "flex";
-      const time = Math.ceil(cooldown_no);
-      setTimer(time);
-    }
+            if (ApiResponse.error === "Workcenter data is not avalable") {
+              document.getElementById("popupHeadHeading").innerText =
+                "Workcenter data not found! Contact support.";
+              document.getElementById("system-x-close").innerText =
+                "Close Popup";
+              document.getElementById("system-x-min").style.display = "none";
+              document.getElementById("againProd").style.display = "none";
+              let popuptimer = document.getElementById("popup_timer");
+              document.getElementById("total_cooldown_no").innerText = "N/A";
+              document.getElementById("adjusted_cooldown").innerText = "N/A";
+              popuptimer.style.display = "flex";
+              setTimer("No data!");
+              return;
+            }
+            let cooldown_no = ApiResponse.cooldown_no;
+            let total_cooldown_no = ApiResponse.total_cooldown_no;
+            document.getElementById("total_cooldown_no").innerText =
+              Math.ceil(total_cooldown_no) + "s";
+            document.getElementById("adjusted_cooldown").innerText =
+              Math.ceil(cooldown_no) + "s";
+            // console.log("cooldown_no", cooldown_no);
+            // console.log("cooldown_no", Math.ceil(cooldown_no));
+            // console.log("API Response Status:", response.status);
+            // console.log("API Response:", response);
+            var elementData = document.getElementById("record_button");
 
-    // }
-  });
-} else {
-  firstLi.style.display = "inline-block";
-  secondLi.style.display = "none";
+            // var firstLi = ulElement.querySelector(
+            //   ".plex-actions li:nth-child(1)"
+            // );
+            // var secondLi = ulElement.querySelector(
+            //   ".plex-actions li:nth-child(2)"
+            // );
+
+            if (response.status == 200) {
+              let popuptimer = document.getElementById("popup_timer");
+
+              if (firstLi) {
+                console.log("test element =>", firstLi);
+                firstLi.style.display = "none";
+              } else {
+                console.error("Element not found with the provided XPath.");
+              }
+
+              if (secondLi) {
+                secondLi.style.display = "inline-block";
+                elementData.style.display = "none";
+              } else {
+                console.error("Element not found with the provided XPath.");
+              }
+
+              console.log("response test =>", ApiResponse);
+              if (cooldown_no > 0) {
+                popuptimer.style.display = "flex";
+                const time = Math.ceil(cooldown_no);
+                setTimer(time);
+              } else {
+                console.log("firstLi.style.display =>");
+                firstLi.style.display = "inline-block";
+                firstLi.click();
+                setTimeout(() => {
+                  // popuptimer.style.display = "none";
+
+                  if (firstLi) {
+                    console.log("test element =>", firstLi);
+                    firstLi.style.display = "none";
+                  } else {
+                    console.error("Element not found with the provided XPath.");
+                  }
+
+                  if (secondLi) {
+                    secondLi.style.display = "inline-block";
+                    elementData.style.display = "flex";
+                  } else {
+                    console.error("Element not found with the provided XPath.");
+                  }
+                }, 1000);
+              }
+            } else {
+              console.log("Error:", response.status);
+              // popuptimer.style.display = "none";
+            }
+            console.log("finale response =>", ApiResponse);
+            return await ApiResponse;
+          })
+          .then((data) => {
+            console.log("API Response:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      } else if ((await localStorage.getItem("fallbacksec").length) !== 0) {
+        let ApiResponse = localStorage.getItem("fallbacksec");
+        console.log("ApiResponse", ApiResponse);
+        let cooldown_no = ApiResponse;
+        // console.log("cooldown_no", cooldown_no);
+        // console.log("cooldown_no", Math.ceil(cooldown_no));
+        // console.log("API Response Status:", response);
+        let popuptimer = document.getElementById("popup_timer");
+        popuptimer.style.display = "flex";
+        const time = Math.ceil(cooldown_no);
+        setTimer(time);
+      }
+
+      // }
+    });
+  } else {
+    firstLi.style.display = "inline-block";
+    secondLi.style.display = "none";
+  }
 }
 
 function getGreeting() {
