@@ -8,6 +8,11 @@ router.post("/cooldown", async (req, res) => {
     const bodyRequest = req.body;
 
     console.log("bodyRequest ==>", bodyRequest);
+    let PCS = bodyRequest.pcs;
+    if (typeof bodyRequest.pcs === "string") {
+      PCS = bodyRequest.pcs.replace(/,/g, ".");
+    }
+    console.log("PCS", PCS);
 
     const pcnCredentials = [
       {
@@ -193,9 +198,7 @@ router.post("/cooldown", async (req, res) => {
       }
 
       console.log("center_rate", center_rate);
-      const perHour = bodyRequest.pcs
-        ? (1 / center_rate) * bodyRequest.pcs
-        : 1 / center_rate;
+      const perHour = PCS ? (1 / center_rate) * PCS : 1 / center_rate;
       const perMin = perHour * 60;
       const perSec = perMin * 60;
 
