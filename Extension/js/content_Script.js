@@ -273,6 +273,18 @@ if (field_name[2]?.textContent === "Quantity per Container") {
   if (input_Field[1].value.length !== 0) {
     inputValue = input_Field[1].value;
   }
+  // =========================  ============================
+  console.log("Quantity per Container change =>");
+  // This function will be called when the input value changes
+  if (input_Field[1].value.length !== 0) {
+    inputValue = input_Field[1]?.value ? input_Field[1]?.value : null;
+    console.log("inputValue", inputValue);
+  } else {
+    inputValue = 0;
+  }
+  console.log("Extracted Value:", inputValue);
+
+  // =====================================================
   input_Field[1].addEventListener("change", function () {
     console.log("Quantity per Container change =>");
     // This function will be called when the input value changes
@@ -296,6 +308,18 @@ if (field_name[1]?.textContent === "Quantity per Container") {
     field_name[1].parentNode.parentNode.parentElement.children[1].children[0];
   console.log("el ==>", el);
   console.log("el.value ==>", el.value);
+  // ========================================================
+  console.log("Quantity per Container change =>");
+  console.log("el.value ==>", el.value);
+  // This function will be called when the input value changes
+  if (el.value.length !== 0) {
+    inputValue = el.value;
+    console.log("inputValue", inputValue);
+  } else {
+    inputValue = 0;
+  }
+  console.log("Extracted Value:", inputValue);
+  // ========================================================
   el.addEventListener("change", function () {
     console.log("Quantity per Container change =>");
     console.log("el.value ==>", el.value);
