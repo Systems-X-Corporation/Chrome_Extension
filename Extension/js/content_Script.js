@@ -377,7 +377,51 @@ if (document.URL.includes("Production?")) {
       console.log("pcnName", data.pcnName);
       const pcnName = data.pcnName;
 
-      if (field_name[2].textContent === "Quantity per Container") {
+      // ================================================
+      // ================================================
+      if (field_name[2]?.textContent === "Quantity per Container") {
+        console.log("field_name[2]", field_name[2]);
+        console.log(
+          "hellofield_name[2].textContent",
+          field_name[2].textContent
+        );
+        if (input_Field[1].value.length !== 0) {
+          inputValue = input_Field[1].value;
+        }
+        // =========================  ============================
+        console.log("Quantity per Container change =>");
+        // This function will be called when the input value changes
+        if (input_Field[1].value.length !== 0) {
+          inputValue = input_Field[1]?.value ? input_Field[1]?.value : null;
+          console.log("inputValue", inputValue);
+        } else {
+          inputValue = 0;
+        }
+        console.log("Extracted Value:", inputValue);
+      }
+      if (field_name[1]?.textContent === "Quantity per Container") {
+        let el =
+          field_name[1].parentNode.parentNode.parentElement.children[1]
+            .children[0];
+        console.log("el ==>", el);
+        console.log("el.value ==>", el.value);
+        // This function will be called when the input value changes
+        if (el.value.length !== 0) {
+          inputValue = el.value;
+          console.log("inputValue", inputValue);
+        } else {
+          inputValue = 0;
+        }
+        console.log("Extracted Value:", inputValue);
+      }
+      if (field_name[1]?.textContent == "Production") {
+        if (input_Field[0].value.length !== 0) {
+          inputValue = input_Field[0].value;
+        }
+      }
+      // ================================================
+      // ================================================
+      if (field_name[2]?.textContent === "Quantity per Container") {
         console.log("test-1 =>", input_Field[1].value);
         if (input_Field[1].value.length !== 0) {
           inputValue = input_Field[1].value;
@@ -385,7 +429,7 @@ if (document.URL.includes("Production?")) {
           inputValue = 0;
         }
       }
-      if (field_name[1].textContent === "Production") {
+      if (field_name[1]?.textContent === "Production") {
         console.log("test-2 =>", input_Field[0].value);
         if (input_Field[0].value.length !== 0) {
           inputValue = input_Field[0].value;
