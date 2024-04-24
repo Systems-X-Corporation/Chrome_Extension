@@ -113,20 +113,26 @@ router.post("/cooldown", async (req, res) => {
     if (apiResponseData.tables[0].rows[0].length >= 1) {
       lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
       if (lastProductionTime != null) {
-        lastProductionTime = lastProductionTime.toLocaleString("en-US", {
-          timeZone: "UTC",
-        });
-        let currentTime = new Date();
-        // Format the date in the desired format
-        currentTime = currentTime.toISOString();
-        currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
-        console.log("current date", typeof currentTime, "date=>", currentTime);
-        let date1 = new Date(currentTime);
-        let date2 = new Date(lastProductionTime);
+        console.log("value is null!!!");
+        // lastProductionTime = lastProductionTime.toLocaleString("en-US", {
+        //   timeZone: "UTC",
+        // });
+        // let currentTime = new Date();
+        // // Format the date in the desired format
+        // currentTime = currentTime.toISOString();
+        // currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
+        // console.log("current date", typeof currentTime, "date=>", currentTime);
+        // let date1 = new Date(currentTime);
+        // let date2 = new Date(lastProductionTime);
 
-        // Calculate the difference in milliseconds
-        difference = date1 - date2;
-        difference = difference / 1000;
+        // // Calculate the difference in milliseconds
+        // difference = date1 - date2;
+        // difference = difference / 1000;
+        res.status(200).json({
+          total_cooldown_no: null,
+          cooldown_no: null,
+        });
+        return;
       } else {
         difference = 0;
       }
