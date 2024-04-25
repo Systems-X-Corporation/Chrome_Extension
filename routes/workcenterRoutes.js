@@ -103,6 +103,7 @@ router.post("/cooldown", async (req, res) => {
     //   "======================================== last production time calculation Time ==========================================="
     // );
     if (apiResponseData.length === 0) {
+      console.log("Workcenter webservice data is not available!")
       return res.status(203).json({ error: "Workcenter data is not avalable" });
     }
     let timeIndex =
@@ -112,29 +113,30 @@ router.post("/cooldown", async (req, res) => {
     let lastProductionTime;
     if (apiResponseData.tables[0].rows[0].length >= 1) {
       lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
+      console.log("lastProductionTime", lastProductionTime);
       if (lastProductionTime != null) {
         console.log("value is null!!!");
-        // lastProductionTime = lastProductionTime.toLocaleString("en-US", {
-        //   timeZone: "UTC",
-        // });
-        // let currentTime = new Date();
-        // // Format the date in the desired format
-        // currentTime = currentTime.toISOString();
-        // currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
-        // console.log("current date", typeof currentTime, "date=>", currentTime);
-        // let date1 = new Date(currentTime);
-        // let date2 = new Date(lastProductionTime);
+        lastProductionTime = lastProductionTime.toLocaleString("en-US", {
+          timeZone: "UTC",
+        });
+        let currentTime = new Date();
+        // Format the date in the desired format
+        currentTime = currentTime.toISOString();
+        currentTime = currentTime.toLocaleString("en-US", { timeZone: "UTC" });
+        console.log("current date", typeof currentTime, "date=>", currentTime);
+        let date1 = new Date(currentTime);
+        let date2 = new Date(lastProductionTime);
 
-        // // Calculate the difference in milliseconds
-        // difference = date1 - date2;
-        // difference = difference / 1000;
+        // Calculate the difference in milliseconds
+        difference = date1 - date2;
+        difference = difference / 1000;
+      } else {
+        // difference = 0;
         res.status(200).json({
           total_cooldown_no: null,
           cooldown_no: null,
         });
         return;
-      } else {
-        difference = 0;
       }
     } else if (apiResponseData.tables[0].rows[0].length <= 1) {
       return res.status(203).json({
