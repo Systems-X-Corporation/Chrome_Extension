@@ -468,6 +468,7 @@ if (document.URL.includes("Production?")) {
         // recordProductionButton.click();
         console.log("firstLi.style.display =>", firstLi);
         fetch(`${baseURL}/cooldown`, {
+        // fetch(`http://localhost:8000/cooldown`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -493,6 +494,7 @@ if (document.URL.includes("Production?")) {
               return;
             }
             if (ApiResponse.error === "Workcenter data is not avalable") {
+              console.log("Workcenter webservice data is not available!")
               document.getElementById("popupHeadHeading").innerText =
                 "Workcenter data not found! Contact support.";
               document.getElementById("system-x-close").innerText =
