@@ -267,6 +267,7 @@ let fallbacksec = localStorage.getItem("fallbacksec");
 const widgetHeaderData = document.querySelector(".widget-header-1").textContent;
 console.log("Data from widget-header-1:", widgetHeaderData);
 console.log("field_name", field_name);
+console.log("field_name[1]", field_name[1]);
 if (field_name[2]?.textContent === "Quantity per Container") {
   console.log("field_name[2]", field_name[2]);
   console.log("hellofield_name[2].textContent", field_name[2].textContent);
@@ -347,6 +348,22 @@ if (field_name[1]?.textContent == "Production") {
     }
     console.log("Extracted Value:", inputValue);
   });
+}
+if (field_name[1]?.textContent === "Produccion") {
+  if (input_Field[0].value.length !== 0) {
+    inputValue = input_Field[0].value;
+  }
+  input_Field[0].addEventListener("change", function () {
+    console.log("Production change =>");
+    // This function will be called when the input value changes
+    if (input_Field[0].value.length !== 0) {
+      inputValue = input_Field[0].value;
+    } else {
+      inputValue = 0;
+    }
+    console.log("Extracted Value:", inputValue);
+  });
+  console.log("Extracted Value:", inputValue);
 }
 const callAPI = localStorage.getItem("callAPI");
 console.log("callAPI =>", callAPI);
@@ -447,7 +464,7 @@ if (document.URL.includes("Production?")) {
         Workcenter_Key: myParam,
         pcnName: pcnName,
       };
-
+      console.log("inputValue", inputValue);
       inputValue !== 0 ? (dataToSend.pcs = inputValue) : "";
       localStorage.getItem("fallbacksec") !== ""
         ? (dataToSend.fall_back_sec = localStorage.getItem("fallbacksec"))
