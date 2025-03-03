@@ -1,6 +1,17 @@
 console.log("Content script loaded ali");
 let baseURL;
 
+let lastProductionTime = null;
+chrome.storage.local.get(["lastProductionTime"], function (result) {
+  lastProductionTime = result.lastProductionTime || null;
+});
+
+let startNewBtn = document.querySelector("#autoID21")
+startNewBtn.addEventListener("click", () => {
+  lastProductionTime = null;
+  chrome.storage.local.set({ lastProductionTime: lastProductionTime });
+})
+
 chrome.storage.local.get(["baseURL"], function (result) {
   console.log("URL =>", result.baseURL);
   baseURL = result.baseURL;
@@ -457,6 +468,7 @@ if (document.URL.includes("Production?")) {
 
       // Create the data to send in the POST request
       var dataToSend = {
+        lastProductionTime: lastProductionTime,
         workcenter_no: widgetHeaderData,
         production_type: productionType,
         percent_of_rate: percentRate,
@@ -493,6 +505,7 @@ if (document.URL.includes("Production?")) {
           body: JSON.stringify(dataToSend),
         })
           .then(async (response) => {
+           
             // console.log("response", await response.json());
             let ApiResponse = await response.json();
             console.log("ApiResponse", ApiResponse);
@@ -567,6 +580,12 @@ if (document.URL.includes("Production?")) {
                 const time = Math.ceil(cooldown_no);
                 setTimer(time);
               } else {
+                lastProductionTime = new Date();
+                lastProductionTime = lastProductionTime.toISOString();
+                chrome.storage.local.set({ lastProductionTime: lastProductionTime });
+                lastProductionTime = lastProductionTime.toLocaleString("en-US", { timeZone: "UTC" });
+                console.log({lastProductionTime})
+                
                 console.log("firstLi.style.display =>");
                 firstLi.style.display = "inline-block";
                 firstLi.click();
