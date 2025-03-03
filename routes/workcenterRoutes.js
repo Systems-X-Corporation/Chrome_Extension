@@ -88,7 +88,8 @@ router.post("/cooldown", async (req, res) => {
       data: body,
     };
     let apiResponseData = await axios.request(config);
-
+     console.log("=======================================>",apiResponseData)
+     console.log("============================")
     // console.log("123 ", typeof apiResponseData);
     console.log("123456 ", JSON.stringify(apiResponseData.data));
     apiResponseData = JSON.stringify(apiResponseData.data);
@@ -112,7 +113,7 @@ router.post("/cooldown", async (req, res) => {
     console.log("temp1 index", timeIndex);
     let lastProductionTime;
     if (apiResponseData.tables[0].rows[0].length >= 1) {
-      lastProductionTime = apiResponseData.tables[0].rows[0][timeIndex];
+      lastProductionTime = req.body.lastProductionTime;
       console.log("lastProductionTime", lastProductionTime);
       if (lastProductionTime != null) {
         console.log("value is null!!!");
