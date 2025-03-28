@@ -6,11 +6,11 @@ chrome.storage.local.get(["lastProductionTime"], function (result) {
   lastProductionTime = result.lastProductionTime || null;
 });
 
-let startNewBtn = document.querySelector("#autoID21")
-startNewBtn.addEventListener("click", () => {
-  lastProductionTime = null;
-  chrome.storage.local.set({ lastProductionTime: lastProductionTime });
-})
+// let startNewBtn = document.querySelector("#autoID21")
+// startNewBtn.addEventListener("click", () => {
+//   lastProductionTime = null;
+//   chrome.storage.local.set({ lastProductionTime: lastProductionTime });
+// })
 
 chrome.storage.local.get(["baseURL"], function (result) {
   console.log("URL =>", result.baseURL);
